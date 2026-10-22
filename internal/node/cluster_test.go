@@ -35,45 +35,31 @@ func inmemDeps(id string) (Deps, *raft.InmemTransport) {
 	return Deps{Logs: store, Stable: store, Snaps: raft.NewInmemSnapshotStore(), Transport: tr}, tr
 }
 
-// newTestCluster starts n nodes whose stores are pre-bootstrapped with the full
-// n-member configuration (Task 4 replaces this with Join).
+// newTestCluster starts n nodes. Node 0 bootstraps alone; the others start
+// empty and are added with Join, the same way kvnode does it.
 func newTestCluster(t *testing.T, n int, tweak func(*Config)) *testCluster {
 	t.Helper()
 	c := &testCluster{t: t}
-	var servers []raft.Server
-	for i := 0; i < n; i++ {
-		id := fmt.Sprintf("n%d", i)
-		d, tr := inmemDeps(id)
-		c.deps = append(c.deps, d)
-		c.trans = append(c.trans, tr)
-		servers = append(servers, raft.Server{ID: raft.ServerID(id), Address: tr.LocalAddr()})
-	}
-	for i := range c.trans {
-		for j := range c.trans {
-			if i != j {
-				c.trans[i].Connect(c.trans[j].LocalAddr(), c.trans[j])
-			}
-		}
-	}
-	for i := 0; i < n; i++ {
-		cfg := fastConfig(fmt.Sprintf("n%d", i))
-		if tweak != nil {
-			tweak(&cfg)
-		}
-		rc := raft.DefaultConfig()
-		rc.LocalID = raft.ServerID(cfg.ID)
-		d := c.deps[i]
-		if err := raft.BootstrapCluster(rc, d.Logs, d.Stable, d.Snaps, d.Transport, raft.Configuration{Servers: servers}); err != nil {
-			t.Fatal(err)
-		}
-		nd, err := New(cfg, d)
-		if err != nil {
-			t.Fatal(err)
-		}
-		c.nodes = append(c.nodes, nd)
-		c.closed = append(c.closed, false)
-	}
 	t.Cleanup(c.shutdownAll)
+	d, tr := inmemDeps("n0")
+	cfg := fastConfig("n0")
+	cfg.Bootstrap = true
+	if tweak != nil {
+		tweak(&cfg)
+	}
+	n0, err := New(cfg, d)
+	if err != nil {
+		t.Fatal(err)
+	}
+	c.nodes, c.trans, c.deps, c.closed = []*Node{n0}, []*raft.InmemTransport{tr}, []Deps{d}, []bool{false}
+	c.leader()
+	for i := 1; i < n; i++ {
+		id := fmt.Sprintf("n%d", i)
+		c.spawn(id, tweak)
+		if err := c.leader().Join(id, id); err != nil {
+			t.Fatalf("join %s: %v", id, err)
+		}
+	}
 	return c
 }
 
