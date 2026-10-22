@@ -2,3 +2,4 @@ bin/
 .superpowers/
 *.test
 *.out
+.DS_Store
