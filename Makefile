@@ -1,5 +1,6 @@
 SHELL := /bin/bash
 BIN   := bin
+export GOTOOLCHAIN := local
 
 .PHONY: test build
 test:
