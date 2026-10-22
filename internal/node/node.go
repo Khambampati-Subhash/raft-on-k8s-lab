@@ -212,4 +212,3 @@ func (n *Node) Status() api.Status {
 }
 
 func (n *Node) Shutdown() error { return n.raft.Shutdown().Error() }
-

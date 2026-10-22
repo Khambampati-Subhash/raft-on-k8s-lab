@@ -31,9 +31,12 @@ func (f *fakeStore) Get(_ context.Context, k string, stale bool) (string, bool, 
 	f.gotKey, f.gotStale = k, stale
 	return f.value, f.found, f.err
 }
-func (f *fakeStore) Join(id, addr string) error { f.gotJoin = api.JoinRequest{ID: id, Addr: addr}; return f.err }
-func (f *fakeStore) Leave(id string) error      { return f.err }
-func (f *fakeStore) Status() api.Status         { return api.Status{ID: "kv-0", LeaderID: f.leaderID} }
+func (f *fakeStore) Join(id, addr string) error {
+	f.gotJoin = api.JoinRequest{ID: id, Addr: addr}
+	return f.err
+}
+func (f *fakeStore) Leave(id string) error { return f.err }
+func (f *fakeStore) Status() api.Status    { return api.Status{ID: "kv-0", LeaderID: f.leaderID} }
 
 func call(t *testing.T, s Store, method, path, body string) *http.Response {
 	t.Helper()

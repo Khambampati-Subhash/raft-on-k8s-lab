@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"testing"
-
 )
 
 // spawn starts a fresh, unbootstrapped node wired to every existing node and
