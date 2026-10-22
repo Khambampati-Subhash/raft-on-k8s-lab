@@ -9,3 +9,10 @@ test:
 build:
 	mkdir -p $(BIN)
 	go build -o $(BIN)/ ./cmd/...
+
+.PHONY: local-up local-down
+local-up:
+	./scripts/local-up.sh
+
+local-down:
+	./scripts/local-down.sh
