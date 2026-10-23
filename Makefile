@@ -70,3 +70,13 @@ smoke:
 
 watch:
 	kubectl -n raftlab exec -it deploy/raftwatch -- /raftwatch --service kv.raftlab.svc.cluster.local --port 8080
+
+# ---- Chaos ----
+CHAOS_MESH_VERSION := 2.8.6
+
+.PHONY: chaos-install
+chaos-install:
+	CHAOS_MESH_VERSION=$(CHAOS_MESH_VERSION) ARCH=$(ARCH) CLUSTER=$(CLUSTER) ./scripts/chaos-install.sh
+
+exp-%:
+	./scripts/exp.sh $*

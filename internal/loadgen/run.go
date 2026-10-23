@@ -136,9 +136,11 @@ func Probe(ctx context.Context, w Writer, r StaleReader, key string, writeEvery,
 					continue
 				}
 			}
+			var l uint64 // 0 is recorded too: "read, in sync" differs from "never read"
 			if want > got {
-				lag[s.Status.ID] = max(lag[s.Status.ID], want-got)
+				l = want - got
 			}
+			lag[s.Status.ID] = max(lag[s.Status.ID], l)
 		}
 	}
 }

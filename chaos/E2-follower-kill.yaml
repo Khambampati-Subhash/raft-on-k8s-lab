@@ -1,0 +1,16 @@
+# E2: kill the Raft follower (one pod with raft-role=follower, labelled by exp.sh just
+# before injection). pod-kill is one-shot; duration bounds the experiment.
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: e2-follower-kill
+  namespace: raftlab
+spec:
+  action: pod-kill
+  mode: one
+  duration: 40s
+  selector:
+    namespaces: [raftlab]
+    labelSelectors:
+      app: kv
+      raft-role: follower

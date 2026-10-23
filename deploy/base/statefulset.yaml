@@ -38,6 +38,10 @@ spec:
           env:
             - name: POD_NAME
               valueFrom: {fieldRef: {fieldPath: metadata.name}}
+            # Let the Go GC work harder before the kernel OOM-kills us; leave
+            # ~50Mi of the limit for non-heap memory (stacks, bolt, runtime).
+            - name: GOMEMLIMIT
+              value: 460MiB
           ports:
             - {name: http, containerPort: 8080}
             - {name: raft, containerPort: 7000}
@@ -50,9 +54,11 @@ spec:
           readinessProbe:
             httpGet: {path: /readyz, port: http}
             periodSeconds: 2
+          # 256Mi OOM-killed the leader in E1: ~300k keys, and a snapshot JSON-
+          # encodes the whole map in memory (docs/experiments/E1-leader-kill.md).
           resources:
             requests: {cpu: 50m, memory: 64Mi}
-            limits: {memory: 256Mi}
+            limits: {memory: 512Mi}
           volumeMounts:
             - {name: data, mountPath: /data}
   volumeClaimTemplates:
