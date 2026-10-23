@@ -1,0 +1,12 @@
+# Stage 3: Raft on plain Deployments. Deliberately wrong — see
+# docs/journey/03-raft-on-deployment.md. The image is a placeholder that
+# `make stage3-deploy` replaces with $(IMAGE).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: raftlab
+resources:
+  - namespace.yaml
+  - service.yaml
+  - seed.yaml
+  - rest.yaml
+  - raftwatch.yaml

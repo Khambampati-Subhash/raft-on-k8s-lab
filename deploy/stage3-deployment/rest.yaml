@@ -1,0 +1,38 @@
+# Two followers that join through the kv-seed Service.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kv-rest
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: kv, role: rest}
+  template:
+    metadata:
+      labels: {app: kv, role: rest}
+    spec:
+      containers:
+        - name: kvnode
+          image: raftlab:dev
+          args:
+            - --id=$(POD_NAME)                # random Deployment pod name
+            - --raft-advertise=$(POD_IP):7000 # pod IP: changes on every restart
+            - --data=/data                    # emptyDir: dies with the pod
+            - --bootstrap=false
+            - --join=http://kv-seed:8080
+          env:
+            - name: POD_NAME
+              valueFrom: {fieldRef: {fieldPath: metadata.name}}
+            - name: POD_IP
+              valueFrom: {fieldRef: {fieldPath: status.podIP}}
+          ports:
+            - {name: http, containerPort: 8080}
+            - {name: raft, containerPort: 7000}
+          readinessProbe:
+            httpGet: {path: /readyz, port: http}
+            periodSeconds: 2
+          volumeMounts:
+            - {name: data, mountPath: /data}
+      volumes:
+        - name: data
+          emptyDir: {}

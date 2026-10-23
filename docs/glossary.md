@@ -23,3 +23,8 @@ Plain-English definitions, added as each term first shows up in the journey.
 | **Stale read** | Reading a node's local copy without checking with the leader. Fast, but may miss recent writes. |
 | **Linearizable read** | A read that reflects every write acknowledged before it started. Here: the leader confirms it's still leader with a majority before answering. |
 | **Bootstrap** | Creating a brand-new cluster: the very first node declares itself the only member. Must happen exactly once. |
+| **Voter / membership** | The list of servers Raft counts when it computes a majority. It changes only through explicit "add voter" / "remove server" entries in the log, never by a node just disappearing. |
+| **Ghost voter** | A member that is still in the membership list but will never come back (its pod and identity are gone). It still counts toward the majority. |
+| **Pre-vote** | A dry-run election: a candidate first asks "would you vote for me?" without bumping the term, so a node that can't win doesn't disrupt the cluster. hashicorp/raft does this, which is why a stuck candidate's term doesn't climb. |
+| **Deployment / StatefulSet** | Kubernetes controllers that keep N pods running. A Deployment's pods are interchangeable: random names, new IP, fresh disk on every replacement. A StatefulSet's pods have stable names (`kv-0`), stable DNS and their own persistent disk. |
+| **emptyDir / PVC** | Pod storage. An `emptyDir` is deleted with the pod. A PersistentVolumeClaim outlives the pod and is reattached to its replacement. |

@@ -1,0 +1,22 @@
+# kv-seed: a stable name for "the node that started the cluster", used by
+# kv-rest pods to join. kv: headless, every kv pod, for raftwatch/raftctl.
+apiVersion: v1
+kind: Service
+metadata:
+  name: kv-seed
+spec:
+  selector: {app: kv, role: seed}
+  ports:
+    - {name: http, port: 8080}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kv
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector: {app: kv}
+  ports:
+    - {name: http, port: 8080}
+    - {name: raft, port: 7000}

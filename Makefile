@@ -50,3 +50,10 @@ cluster-down:
 
 load-image:
 	kind load docker-image $(IMAGE) --name $(CLUSTER)
+
+.PHONY: stage3-deploy stage3-demo
+stage3-deploy:
+	kubectl kustomize deploy/stage3-deployment | sed "s|image: raftlab:dev|image: $(IMAGE)|" | kubectl apply -f -
+
+stage3-demo:
+	IMAGE=$(IMAGE) ./scripts/stage3-demo.sh

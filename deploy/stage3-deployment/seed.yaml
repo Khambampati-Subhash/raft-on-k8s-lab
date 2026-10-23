@@ -1,0 +1,38 @@
+# The seed always bootstraps. Fine the first time; on every restart it comes
+# back with an empty emptyDir and bootstraps a brand-new cluster of one.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kv-seed
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: kv, role: seed}
+  template:
+    metadata:
+      labels: {app: kv, role: seed}
+    spec:
+      containers:
+        - name: kvnode
+          image: raftlab:dev
+          args:
+            - --id=$(POD_NAME)                # random Deployment pod name
+            - --raft-advertise=$(POD_IP):7000 # pod IP: changes on every restart
+            - --data=/data                    # emptyDir: dies with the pod
+            - --bootstrap=true
+          env:
+            - name: POD_NAME
+              valueFrom: {fieldRef: {fieldPath: metadata.name}}
+            - name: POD_IP
+              valueFrom: {fieldRef: {fieldPath: status.podIP}}
+          ports:
+            - {name: http, containerPort: 8080}
+            - {name: raft, containerPort: 7000}
+          readinessProbe:
+            httpGet: {path: /readyz, port: http}
+            periodSeconds: 2
+          volumeMounts:
+            - {name: data, mountPath: /data}
+      volumes:
+        - name: data
+          emptyDir: {}
