@@ -16,3 +16,37 @@ local-up:
 
 local-down:
 	./scripts/local-down.sh
+
+# ---- Kubernetes (kind) ----
+CLUSTER := raftlab
+IMAGE   ?= raftlab:$(shell git describe --always --dirty)
+# Docker Desktop set to "8 GB" reports ~7.8 GiB (kernel reserve), so check 7.5 GiB.
+MIN_DOCKER_MEM := 8053063680
+
+.PHONY: tools image cluster-up cluster-up-5 cluster-down load-image
+tools:
+	@for t in kind helm kubectl docker; do command -v $$t >/dev/null || { echo "missing: $$t"; exit 1; }; done
+	@mem=$$(docker info --format '{{.MemTotal}}') || { echo "docker daemon not reachable"; exit 1; }; \
+	  echo "docker memory: $$((mem / 1048576)) MiB"; \
+	  [ "$$mem" -ge $(MIN_DOCKER_MEM) ] || { echo "need >= 7.5 GiB for docker (set Docker Desktop to 8 GB+)"; exit 1; }
+
+ARCH ?= arm64
+
+image:
+	rm -rf $(BIN)/linux && mkdir -p $(BIN)/linux
+	CGO_ENABLED=0 GOOS=linux GOARCH=$(ARCH) go build -trimpath -o $(BIN)/linux/ ./cmd/...
+	docker build --platform linux/$(ARCH) -t $(IMAGE) .
+
+cluster-up: tools
+	kind create cluster --config deploy/kind/cluster-3.yaml --wait 120s
+	kubectl wait --for=condition=Ready nodes --all --timeout=120s
+
+cluster-up-5: tools
+	kind create cluster --config deploy/kind/cluster-5.yaml --wait 120s
+	kubectl wait --for=condition=Ready nodes --all --timeout=120s
+
+cluster-down:
+	kind delete cluster --name $(CLUSTER)
+
+load-image:
+	kind load docker-image $(IMAGE) --name $(CLUSTER)
