@@ -100,7 +100,7 @@ func TestPercentiles(t *testing.T) {
 		recs = append(recs, Record{Key: strconv.Itoa(i), Outcome: client.OK, Start: t0, End: t0.Add(time.Duration(i) * time.Millisecond)})
 	}
 	rep := Verify(context.Background(), nil, &mapReader{}, time.Second)
-	rep.addLatency(recs)
+	rep.AddLatency(recs)
 	if rep.P50 != 50*time.Millisecond || rep.P99 != 99*time.Millisecond {
 		t.Fatalf("P50=%v P99=%v, want 50ms 99ms", rep.P50, rep.P99)
 	}
