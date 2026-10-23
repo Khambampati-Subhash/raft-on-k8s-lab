@@ -48,12 +48,25 @@ cluster-up-5: tools
 cluster-down:
 	kind delete cluster --name $(CLUSTER)
 
-load-image:
+load-image: image
 	kind load docker-image $(IMAGE) --name $(CLUSTER)
 
 .PHONY: stage3-deploy stage3-demo
-stage3-deploy:
+stage3-deploy: load-image
 	kubectl kustomize deploy/stage3-deployment | sed "s|image: raftlab:dev|image: $(IMAGE)|" | kubectl apply -f -
 
-stage3-demo:
+stage3-demo: load-image
 	IMAGE=$(IMAGE) ./scripts/stage3-demo.sh
+
+.PHONY: deploy undeploy smoke watch
+deploy: load-image
+	kubectl kustomize deploy/base | sed "s|image: raftlab:dev|image: $(IMAGE)|" | kubectl apply -f -
+
+undeploy:
+	kubectl delete namespace raftlab --ignore-not-found
+
+smoke:
+	./scripts/smoke.sh
+
+watch:
+	kubectl -n raftlab exec -it deploy/raftwatch -- /raftwatch --service kv.raftlab.svc.cluster.local --port 8080

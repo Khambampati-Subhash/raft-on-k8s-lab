@@ -1,0 +1,25 @@
+# kv: headless. Gives every pod a stable DNS name (kv-0.kv.raftlab.svc...),
+# which is its Raft address. publishNotReadyAddresses: a pod is only Ready once
+# it knows a leader, and there is no leader until peers can resolve each other
+# — without this flag that is a deadlock.
+apiVersion: v1
+kind: Service
+metadata:
+  name: kv
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector: {app: kv}
+  ports:
+    - {name: http, port: 8080}
+    - {name: raft, port: 7000}
+---
+# kv-client: any Ready pod, for clients. Followers redirect writes to the leader.
+apiVersion: v1
+kind: Service
+metadata:
+  name: kv-client
+spec:
+  selector: {app: kv}
+  ports:
+    - {name: http, port: 8080}

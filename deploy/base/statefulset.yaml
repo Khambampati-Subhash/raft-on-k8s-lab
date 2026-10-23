@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kv
+  labels: {app: kv}
+spec:
+  serviceName: kv
+  replicas: 3
+  # Parallel: with OrderedReady, kv-1 waits for kv-0 to be Ready, and kv-0 is
+  # only Ready once it can see a leader, which needs kv-1. Deadlock.
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels: {app: kv}
+  template:
+    metadata:
+      labels: {app: kv}
+    spec:
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        fsGroup: 65532 # the PVC is writable by the nonroot user
+      affinity:
+        podAntiAffinity: # one member per node: losing a node loses one vote
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels: {app: kv}
+              topologyKey: kubernetes.io/hostname
+      containers:
+        - name: kvnode
+          image: raftlab:dev
+          args:
+            - --id=$(POD_NAME)
+            - --raft-advertise=$(POD_NAME).kv.raftlab.svc.cluster.local:7000
+            - --bootstrap=auto # only kv-0, and only with no existing state
+            - --join=http://kv-0.kv.raftlab.svc.cluster.local:8080,http://kv-1.kv.raftlab.svc.cluster.local:8080,http://kv-2.kv.raftlab.svc.cluster.local:8080
+            - --data=/data
+          env:
+            - name: POD_NAME
+              valueFrom: {fieldRef: {fieldPath: metadata.name}}
+          ports:
+            - {name: http, containerPort: 8080}
+            - {name: raft, containerPort: 7000}
+          # Liveness asks "is the process alive", never "is there a leader":
+          # during an election every pod would fail it and get restarted.
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet: {path: /readyz, port: http}
+            periodSeconds: 2
+          resources:
+            requests: {cpu: 50m, memory: 64Mi}
+            limits: {memory: 256Mi}
+          volumeMounts:
+            - {name: data, mountPath: /data}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources:
+          requests: {storage: 1Gi}

@@ -1,0 +1,22 @@
+# Long-running pod with every binary: `make watch` and the scripts exec
+# raftwatch / raftctl / loadgen from here.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: raftwatch
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: raftwatch}
+  template:
+    metadata:
+      labels: {app: raftwatch}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+      containers:
+        - name: raftwatch
+          image: raftlab:dev
+          command: [/raftwatch]
+          args: [--service=kv.raftlab.svc.cluster.local, --port=8080, --events-only]

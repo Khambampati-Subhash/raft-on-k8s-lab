@@ -1,0 +1,9 @@
+# Voluntary disruptions (node drains, upgrades) take down at most one member.
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: kv
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels: {app: kv}

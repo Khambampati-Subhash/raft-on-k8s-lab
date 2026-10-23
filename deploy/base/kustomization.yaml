@@ -1,0 +1,11 @@
+# Stage 4: Raft on a StatefulSet. The image is a placeholder that
+# `make deploy` replaces with $(IMAGE).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: raftlab
+resources:
+  - namespace.yaml
+  - services.yaml
+  - statefulset.yaml
+  - pdb.yaml
+  - raftwatch.yaml
