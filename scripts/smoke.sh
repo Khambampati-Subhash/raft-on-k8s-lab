@@ -50,6 +50,7 @@ MARK=$(date +%s%N)
   || fail "write smoke/marker through $LEADER"
 for _ in $(seq 1 50); do [ "$(http kv-1 'http://127.0.0.1:PORT/kv/smoke/marker?stale=true')" = "$MARK" ] && break; sleep 0.1; done
 UID_BEFORE=$(k get pod kv-1 -o jsonpath='{.metadata.uid}')
+PVC_BEFORE=$(k get pvc data-kv-1 -o jsonpath='{.metadata.uid}')
 k delete pod kv-1 --wait=false >/dev/null
 for _ in $(seq 1 60); do
   [ "$(k get pod kv-1 -o jsonpath='{.metadata.uid}' 2>/dev/null)" != "$UID_BEFORE" ] && break; sleep 1
@@ -57,7 +58,15 @@ done
 k wait --for=condition=Ready pod/kv-1 --timeout=120s >/dev/null || fail "kv-1 Ready again"
 ok "kv-1 replaced and Ready"
 check "after restart: still one leader, voters exactly kv-0..kv-2 (no ghost)" "$ONE_LEADER"
-GOT=$(http kv-1 'http://127.0.0.1:PORT/kv/smoke/marker?stale=true')
+[ "$(k get pvc data-kv-1 -o jsonpath='{.metadata.uid}')" = "$PVC_BEFORE" ] || fail "data-kv-1 PVC was replaced"
+ok "new kv-1 pod got the same PVC back"
+# Ready means "knows a leader", not "has applied its log": a restarted member
+# applies nothing until the leader tells it the commit index (E1), so poll.
+for _ in $(seq 1 20); do
+  GOT=$(http kv-1 'http://127.0.0.1:PORT/kv/smoke/marker?stale=true')
+  [ "$GOT" = "$MARK" ] && break
+  sleep 0.5
+done
 [ "$GOT" = "$MARK" ] || fail "stale read of smoke/marker on new kv-1: got '$GOT', want '$MARK'"
-ok "new kv-1 pod serves smoke/marker from its PVC"
+ok "new kv-1 pod serves smoke/marker"
 echo "SMOKE PASSED"

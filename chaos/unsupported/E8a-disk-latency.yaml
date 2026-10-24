@@ -1,0 +1,18 @@
+# E8a: every filesystem operation under the leader's /data takes 200ms longer.
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: e8a-disk-latency
+  namespace: raftlab
+spec:
+  action: latency
+  mode: one
+  duration: 40s
+  delay: 200ms
+  volumePath: /data
+  path: /data/**
+  percent: 100
+  containerNames: [kvnode]
+  selector:
+    namespaces: [raftlab]
+    labelSelectors: {app: kv, raft-role: leader}

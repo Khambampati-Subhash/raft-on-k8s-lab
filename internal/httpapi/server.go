@@ -12,6 +12,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/Khambampati-Subhash/raft-on-k8s-lab/internal/api"
 	"github.com/Khambampati-Subhash/raft-on-k8s-lab/internal/node"
@@ -29,11 +30,49 @@ type Store interface {
 	Status() api.Status
 }
 
+// Faulter injects storage faults (node.FaultLogStore). Debug only.
+type Faulter interface {
+	SetFault(delay time.Duration, failRate float64)
+}
+
+// Option configures optional, non-default endpoints.
+type Option func(*http.ServeMux)
+
+// WithFaultInjector mounts POST /debug/store-fault {"delay":"200ms","failRate":0.5}.
+// Zero values turn the fault off. Without this option the route doesn't exist.
+func WithFaultInjector(f Faulter) Option {
+	return func(mux *http.ServeMux) {
+		mux.HandleFunc("POST /debug/store-fault", func(w http.ResponseWriter, r *http.Request) {
+			var req api.StoreFault
+			if !decode(w, r, &req) {
+				return
+			}
+			var d time.Duration
+			if req.Delay != "" {
+				var err error
+				if d, err = time.ParseDuration(req.Delay); err != nil || d < 0 {
+					http.Error(w, "delay: want a duration like 200ms", http.StatusBadRequest)
+					return
+				}
+			}
+			if req.FailRate < 0 || req.FailRate > 1 {
+				http.Error(w, "failRate: want 0..1", http.StatusBadRequest)
+				return
+			}
+			f.SetFault(d, req.FailRate)
+			w.WriteHeader(http.StatusNoContent)
+		})
+	}
+}
+
 type handler struct{ s Store }
 
-func New(s Store) http.Handler {
+func New(s Store, opts ...Option) http.Handler {
 	h := handler{s}
 	mux := http.NewServeMux()
+	for _, o := range opts {
+		o(mux)
+	}
 	mux.HandleFunc("PUT /kv/{key...}", h.put)
 	mux.HandleFunc("DELETE /kv/{key...}", h.delete)
 	mux.HandleFunc("GET /kv/{key...}", h.get)

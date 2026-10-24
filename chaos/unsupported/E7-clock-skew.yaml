@@ -1,0 +1,15 @@
+# E7: set the leader's wall clock 5 minutes back (TimeChaos rewrites the
+# process's clock_gettime via the vDSO).
+apiVersion: chaos-mesh.org/v1alpha1
+kind: TimeChaos
+metadata:
+  name: e7-clock-skew
+  namespace: raftlab
+spec:
+  mode: one
+  duration: 40s
+  timeOffset: "-5m"
+  containerNames: [kvnode]
+  selector:
+    namespaces: [raftlab]
+    labelSelectors: {app: kv, raft-role: leader}

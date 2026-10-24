@@ -1,0 +1,285 @@
+# experiment E8a  run e8a-20261024t093017
+
+## kv pods before (name uid restarts last-termination)
+kv-0 c8d152bf-ec82-41e6-8d3b-28a9f47713f4 0 
+kv-1 6a6bff21-eeca-4650-90be-fe77392b02f5 0 
+kv-2 9be8ec89-8dd1-461f-a9b0-aec4dbd6648b 0 
+
+## raftctl status before
+[
+  {
+    "url": "http://10.244.2.40:8080",
+    "status": {
+      "id": "kv-0",
+      "role": "leader",
+      "term": 2,
+      "leaderId": "kv-0",
+      "leaderAddr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 4,
+      "appliedIndex": 4,
+      "lastLogIndex": 4,
+      "lastContact": "0",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  },
+  {
+    "url": "http://10.244.3.43:8080",
+    "status": {
+      "id": "kv-1",
+      "role": "follower",
+      "term": 2,
+      "leaderId": "kv-0",
+      "leaderAddr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 4,
+      "appliedIndex": 4,
+      "lastLogIndex": 4,
+      "lastContact": "85.270208ms",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  },
+  {
+    "url": "http://10.244.1.33:8080",
+    "status": {
+      "id": "kv-2",
+      "role": "follower",
+      "term": 2,
+      "leaderId": "kv-0",
+      "leaderAddr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 4,
+      "appliedIndex": 4,
+      "lastLogIndex": 4,
+      "lastContact": "29.806ms",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  }
+]
+
+## injection
+leader before injection: kv-0
+  kv-0 Running leader l
+  kv-1 Running follower f1
+  kv-2 Running follower f2
+injected at 2026-10-24T09:31:04.349+00:00
+target: kv-0 (leader)
+kv-0: delay=200ms fail-rate=0
+kv-0: delay=0s fail-rate=0
+
+## raftwatch events
+
+## loadgen
+loadgen: run e8a-20261024t093017, 4 workers for 2m0s
+loadgen: verifying 208758 writes
+run e8a-20261024t093017
+  writes: 208758 total, 208758 ok, 0 failed, 0 indeterminate (0 present, 0 absent)
+  latency (ok): p50 1.505ms, p99 2.805ms
+  unavailability windows: 7
+    09:31:06.788 .. 09:31:07.399 (611ms)
+    09:31:08.232 .. 09:31:08.847 (616ms)
+    09:31:23.657 .. 09:31:24.273 (615ms)
+    09:31:36.007 .. 09:31:36.618 (611ms)
+    09:31:36.619 .. 09:31:37.243 (624ms)
+    09:31:37.864 .. 09:31:38.480 (616ms)
+    09:31:39.719 .. 09:31:40.337 (618ms)
+  stale-read max lag: kv-0=0 kv-1=1 kv-2=0
+  Lost: 0
+{
+  "failed": 0,
+  "gaps": [
+    {
+      "from": "2026-10-24T09:31:06.788669633Z",
+      "to": "2026-10-24T09:31:07.399627675Z"
+    },
+    {
+      "from": "2026-10-24T09:31:08.232134217Z",
+      "to": "2026-10-24T09:31:08.847671967Z"
+    },
+    {
+      "from": "2026-10-24T09:31:23.657857876Z",
+      "to": "2026-10-24T09:31:24.273202252Z"
+    },
+    {
+      "from": "2026-10-24T09:31:36.007420632Z",
+      "to": "2026-10-24T09:31:36.618766799Z"
+    },
+    {
+      "from": "2026-10-24T09:31:36.619695133Z",
+      "to": "2026-10-24T09:31:37.2435253Z"
+    },
+    {
+      "from": "2026-10-24T09:31:37.864687967Z",
+      "to": "2026-10-24T09:31:38.480294634Z"
+    },
+    {
+      "from": "2026-10-24T09:31:39.719191967Z",
+      "to": "2026-10-24T09:31:40.337144093Z"
+    }
+  ],
+  "indeterminate": 0,
+  "indeterminate_absent": 0,
+  "indeterminate_present": 0,
+  "lost": 0,
+  "lost_keys": null,
+  "ok": 208758,
+  "p50_ms": 1.505125,
+  "p99_ms": 2.805167,
+  "run_id": "e8a-20261024t093017",
+  "stale_lag": {
+    "kv-0": 0,
+    "kv-1": 1,
+    "kv-2": 0
+  },
+  "total": 208758,
+  "verify_errors": 0
+}
+
+## kv pods after
+kv-0 c8d152bf-ec82-41e6-8d3b-28a9f47713f4 0 
+kv-1 6a6bff21-eeca-4650-90be-fe77392b02f5 0 
+kv-2 9be8ec89-8dd1-461f-a9b0-aec4dbd6648b 0 
+
+## raftctl status after
+[
+  {
+    "url": "http://10.244.2.40:8080",
+    "status": {
+      "id": "kv-0",
+      "role": "leader",
+      "term": 2,
+      "leaderId": "kv-0",
+      "leaderAddr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 209623,
+      "appliedIndex": 209623,
+      "lastLogIndex": 209623,
+      "lastContact": "0",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  },
+  {
+    "url": "http://10.244.3.43:8080",
+    "status": {
+      "id": "kv-1",
+      "role": "follower",
+      "term": 2,
+      "leaderId": "kv-0",
+      "leaderAddr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 209623,
+      "appliedIndex": 209623,
+      "lastLogIndex": 209623,
+      "lastContact": "32.044541ms",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  },
+  {
+    "url": "http://10.244.1.33:8080",
+    "status": {
+      "id": "kv-2",
+      "role": "follower",
+      "term": 2,
+      "leaderId": "kv-0",
+      "leaderAddr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 209623,
+      "appliedIndex": 209623,
+      "lastLogIndex": 209623,
+      "lastContact": "47.511791ms",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  }
+]
+
+## result: PASS (job status 0)

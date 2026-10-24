@@ -55,7 +55,14 @@ SMOKE PASSED
 
 The last three lines are stage 3's failure, fixed. Deleting `kv-1` produced a new pod
 **named `kv-1`**. It rejoined as the same member (membership is still exactly
-`kv-0..kv-2`), and it served a key written before the restart straight from its own disk.
+`kv-0..kv-2`), and it served a key written before the restart.
+
+_Correction, found later in [E1](../experiments/E1-leader-kill.md#explanation):_ that last
+check was weaker than it looked, and racy. A restarted member applies nothing until the
+leader tells it how much of its log is committed, so right after Ready it can briefly serve
+an empty store. A brand-new empty member would *also* eventually serve the key through
+replication. `smoke.sh` now checks that `kv-1` got the **same PVC** back (same UID), which is
+the real proof, and polls for the key instead of reading once.
 
 (Write latency here is ~1.6 ms p50, against ~78 ms for the same loadgen on the macOS laptop
 in stage 2. We didn't dig into why. The likely suspect is how expensive `fsync` is on macOS

@@ -1,0 +1,653 @@
+SIGQUIT: quit
+PC=0x8cadc m=0 sigcode=0
+
+goroutine 0 gp=0x76f020 m=0 mp=0x770160 [idle]:
+runtime.futex(0x7702b0, 0x80, 0x0, 0x0, 0x0, 0x0)
+	runtime/sys_linux_arm64.s:651 +0x1c fp=0xffffcd3d38a0 sp=0xffffcd3d38a0 pc=0x8cadc
+runtime.futexsleep(0xffffcd3d3958?, 0x56f50?, 0x0?)
+	runtime/os_linux.go:76 +0x28 fp=0xffffcd3d38f0 sp=0xffffcd3d38a0 pc=0x4a428
+runtime.notesleep(0x7702b0)
+	runtime/lock_futex.go:47 +0x8c fp=0xffffcd3d3930 sp=0xffffcd3d38f0 pc=0x239dc
+runtime.mPark(...)
+	runtime/proc.go:1960
+runtime.stopm()
+	runtime/proc.go:2999 +0x84 fp=0xffffcd3d3960 sp=0xffffcd3d3930 pc=0x55914
+runtime.findRunnable()
+	runtime/proc.go:3770 +0x12dc fp=0xffffcd3d3b30 sp=0xffffcd3d3960 pc=0x5799c
+runtime.schedule()
+	runtime/proc.go:4138 +0x90 fp=0xffffcd3d3b70 sp=0xffffcd3d3b30 pc=0x58c40
+runtime.park_m(0x4000103c00)
+	runtime/proc.go:4266 +0x2ac fp=0xffffcd3d3bd0 sp=0xffffcd3d3b70 pc=0x5911c
+runtime.mcall()
+	runtime/asm_arm64.s:241 +0x54 fp=0xffffcd3d3be0 sp=0xffffcd3d3bd0 pc=0x892b4
+
+goroutine 1 gp=0x40000021c0 m=nil [chan receive, 4 minutes]:
+runtime.gopark(0x4000111ba8?, 0x2459ac?, 0x48?, 0x47?, 0x376740?)
+	runtime/proc.go:460 +0xc0 fp=0x40001f1b20 sp=0x40001f1b00 pc=0x838e0
+runtime.chanrecv(0x400009e5b0, 0x0, 0x1)
+	runtime/chan.go:667 +0x40c fp=0x40001f1ba0 sp=0x40001f1b20 pc=0x1edec
+runtime.chanrecv1(0x4ba520?, 0x796b80?)
+	runtime/chan.go:509 +0x14 fp=0x40001f1bd0 sp=0x40001f1ba0 pc=0x1e9a4
+main.main()
+	github.com/Khambampati-Subhash/raft-on-k8s-lab/cmd/kvnode/main.go:93 +0xa78 fp=0x40001f1f40 sp=0x40001f1bd0 pc=0x2fb358
+runtime.main()
+	runtime/proc.go:285 +0x278 fp=0x40001f1fd0 sp=0x40001f1f40 pc=0x506d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40001f1fd0 sp=0x40001f1fd0 pc=0x8b684
+
+goroutine 2 gp=0x4000002700 m=nil [force gc (idle), 2 minutes]:
+runtime.gopark(0x30010bb7fb6?, 0x0?, 0x0?, 0x0?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x400006cf90 sp=0x400006cf70 pc=0x838e0
+runtime.goparkunlock(...)
+	runtime/proc.go:466
+runtime.forcegchelper()
+	runtime/proc.go:373 +0xb4 fp=0x400006cfd0 sp=0x400006cf90 pc=0x50a24
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x400006cfd0 sp=0x400006cfd0 pc=0x8b684
+created by runtime.init.7 in goroutine 1
+	runtime/proc.go:361 +0x24
+
+goroutine 3 gp=0x4000002c40 m=nil [GC sweep wait]:
+runtime.gopark(0x76e101?, 0x0?, 0x0?, 0x0?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x400006d760 sp=0x400006d740 pc=0x838e0
+runtime.goparkunlock(...)
+	runtime/proc.go:466
+runtime.bgsweep(0x400007c000)
+	runtime/mgcsweep.go:323 +0x104 fp=0x400006d7b0 sp=0x400006d760 pc=0x3b0f4
+runtime.gcenable.gowrap1()
+	runtime/mgc.go:212 +0x28 fp=0x400006d7d0 sp=0x400006d7b0 pc=0x2eff8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x400006d7d0 sp=0x400006d7d0 pc=0x8b684
+created by runtime.gcenable in goroutine 1
+	runtime/mgc.go:212 +0x6c
+
+goroutine 4 gp=0x4000002e00 m=nil [GC scavenge wait]:
+runtime.gopark(0x6db3d3?, 0x4f02e6?, 0x0?, 0x0?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x400006df60 sp=0x400006df40 pc=0x838e0
+runtime.goparkunlock(...)
+	runtime/proc.go:466
+runtime.(*scavengerState).park(0x76eb40)
+	runtime/mgcscavenge.go:425 +0x5c fp=0x400006df90 sp=0x400006df60 pc=0x38c3c
+runtime.bgscavenge(0x400007c000)
+	runtime/mgcscavenge.go:658 +0xac fp=0x400006dfb0 sp=0x400006df90 pc=0x391bc
+runtime.gcenable.gowrap2()
+	runtime/mgc.go:213 +0x28 fp=0x400006dfd0 sp=0x400006dfb0 pc=0x2ef98
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x400006dfd0 sp=0x400006dfd0 pc=0x8b684
+created by runtime.gcenable in goroutine 1
+	runtime/mgc.go:213 +0xac
+
+goroutine 5 gp=0x4000003340 m=nil [GOMAXPROCS updater (idle), 4 minutes]:
+runtime.gopark(0x0?, 0x0?, 0x0?, 0x0?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x400006e770 sp=0x400006e750 pc=0x838e0
+runtime.goparkunlock(...)
+	runtime/proc.go:466
+runtime.updateMaxProcsGoroutine()
+	runtime/proc.go:6706 +0xf4 fp=0x400006e7d0 sp=0x400006e770 pc=0x5f424
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x400006e7d0 sp=0x400006e7d0 pc=0x8b684
+created by runtime.defaultGOMAXPROCSUpdateEnable in goroutine 1
+	runtime/proc.go:6694 +0x48
+
+goroutine 6 gp=0x4000003500 m=nil [finalizer wait, 4 minutes]:
+runtime.gopark(0x0?, 0x0?, 0xb8?, 0xc5?, 0x843a4?)
+	runtime/proc.go:460 +0xc0 fp=0x400006c580 sp=0x400006c560 pc=0x838e0
+runtime.runFinalizers()
+	runtime/mfinal.go:210 +0x104 fp=0x400006c7d0 sp=0x400006c580 pc=0x2dfe4
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x400006c7d0 sp=0x400006c7d0 pc=0x8b684
+created by runtime.createfing in goroutine 1
+	runtime/mfinal.go:172 +0x78
+
+goroutine 7 gp=0x40000036c0 m=nil [cleanup wait, 4 minutes]:
+runtime.gopark(0x0?, 0x0?, 0x0?, 0x0?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x400006ef40 sp=0x400006ef20 pc=0x838e0
+runtime.goparkunlock(...)
+	runtime/proc.go:466
+runtime.(*cleanupQueue).dequeue(0x76ee60)
+	runtime/mcleanup.go:439 +0x110 fp=0x400006ef80 sp=0x400006ef40 pc=0x2b040
+runtime.runCleanups()
+	runtime/mcleanup.go:635 +0x40 fp=0x400006efd0 sp=0x400006ef80 pc=0x2b850
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x400006efd0 sp=0x400006efd0 pc=0x8b684
+created by runtime.(*cleanupQueue).createGs in goroutine 1
+	runtime/mcleanup.go:589 +0x108
+
+goroutine 8 gp=0x4000003880 m=nil [IO wait, 4 minutes]:
+runtime.gopark(0x0?, 0x0?, 0x0?, 0x0?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x400006f420 sp=0x400006f400 pc=0x838e0
+runtime.netpollblock(0x7000000000?, 0x0?, 0x0?)
+	runtime/netpoll.go:575 +0x150 fp=0x400006f460 sp=0x400006f420 pc=0x496b0
+internal/poll.runtime_pollWait(0xffff5b1d2000, 0x72)
+	runtime/netpoll.go:351 +0xa0 fp=0x400006f490 sp=0x400006f460 pc=0x82ad0
+internal/poll.(*pollDesc).wait(0x4000036400?, 0x0?, 0x0)
+	internal/poll/fd_poll_runtime.go:84 +0x28 fp=0x400006f4c0 sp=0x400006f490 pc=0xdf3b8
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Accept(0x4000036400)
+	internal/poll/fd_unix.go:613 +0x21c fp=0x400006f570 sp=0x400006f4c0 pc=0xe0f3c
+net.(*netFD).accept(0x4000036400)
+	net/fd_unix.go:161 +0x28 fp=0x400006f630 sp=0x400006f570 pc=0x150568
+net.(*TCPListener).accept(0x400009da80)
+	net/tcpsock_posix.go:159 +0x24 fp=0x400006f680 sp=0x400006f630 pc=0x15f624
+net.(*TCPListener).Accept(0x400009da80)
+	net/tcpsock.go:380 +0x2c fp=0x400006f6c0 sp=0x400006f680 pc=0x15ea8c
+github.com/Khambampati-Subhash/raft-on-k8s-lab/internal/node.(*dnsStreamLayer).Accept(0x0?)
+	<autogenerated>:1 +0x2c fp=0x400006f6e0 sp=0x400006f6c0 pc=0x2f86fc
+github.com/hashicorp/raft.(*NetworkTransport).listen(0x40001840e0)
+	github.com/hashicorp/raft@v1.8.0/net_transport.go:568 +0x40 fp=0x400006f7b0 sp=0x400006f6e0 pc=0x2c2230
+github.com/hashicorp/raft.NewNetworkTransportWithConfig.gowrap1()
+	github.com/hashicorp/raft@v1.8.0/net_transport.go:242 +0x28 fp=0x400006f7d0 sp=0x400006f7b0 pc=0x2c06e8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x400006f7d0 sp=0x400006f7d0 pc=0x8b684
+created by github.com/hashicorp/raft.NewNetworkTransportWithConfig in goroutine 1
+	github.com/hashicorp/raft@v1.8.0/net_transport.go:242 +0x250
+
+goroutine 9 gp=0x4000003a40 m=nil [select]:
+runtime.gopark(0x40000d7a80?, 0xe?, 0x78?, 0x75?, 0x40000d76ec?)
+	runtime/proc.go:460 +0xc0 fp=0x40000d7530 sp=0x40000d7510 pc=0x838e0
+runtime.selectgo(0x40000d7a80, 0x40000d76d0, 0x40000d7b68?, 0x0, 0x3cc600?, 0x1)
+	runtime/select.go:351 +0x670 fp=0x40000d7670 sp=0x40000d7530 pc=0x63e90
+github.com/hashicorp/raft.(*Raft).leaderLoop(0x40000d2848)
+	github.com/hashicorp/raft@v1.8.0/raft.go:683 +0x278 fp=0x40000d7d00 sp=0x40000d7670 pc=0x2c9478
+github.com/hashicorp/raft.(*Raft).runLeader(0x40000d2848)
+	github.com/hashicorp/raft@v1.8.0/raft.go:576 +0x338 fp=0x40000d7f40 sp=0x40000d7d00 pc=0x2c8458
+github.com/hashicorp/raft.(*Raft).run(0x40000d2848)
+	github.com/hashicorp/raft@v1.8.0/raft.go:153 +0x54 fp=0x40000d7f80 sp=0x40000d7f40 pc=0x2c54f4
+github.com/hashicorp/raft.(*Raft).run-fm()
+	<autogenerated>:1 +0x28 fp=0x40000d7fa0 sp=0x40000d7f80 pc=0x2dc2e8
+github.com/hashicorp/raft.(*raftState).goFunc.func1()
+	github.com/hashicorp/raft@v1.8.0/state.go:149 +0x50 fp=0x40000d7fd0 sp=0x40000d7fa0 pc=0x2d9630
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40000d7fd0 sp=0x40000d7fd0 pc=0x8b684
+created by github.com/hashicorp/raft.(*raftState).goFunc in goroutine 1
+	github.com/hashicorp/raft@v1.8.0/state.go:147 +0x78
+
+goroutine 10 gp=0x4000003c00 m=nil [select, 2 minutes]:
+runtime.gopark(0x40001a8e98?, 0x3?, 0xe0?, 0x59?, 0x40001a8dc2?)
+	runtime/proc.go:460 +0xc0 fp=0x40001a8c20 sp=0x40001a8c00 pc=0x838e0
+runtime.selectgo(0x40001a8e98, 0x40001a8dbc, 0x4?, 0x0, 0x0?, 0x1)
+	runtime/select.go:351 +0x670 fp=0x40001a8d60 sp=0x40001a8c20 pc=0x63e90
+github.com/hashicorp/raft.(*Raft).runFSM(0x40000d2848)
+	github.com/hashicorp/raft@v1.8.0/fsm.go:240 +0x19c fp=0x40001a8f80 sp=0x40001a8d60 pc=0x2be92c
+github.com/hashicorp/raft.(*Raft).runFSM-fm()
+	<autogenerated>:1 +0x28 fp=0x40001a8fa0 sp=0x40001a8f80 pc=0x2dc348
+github.com/hashicorp/raft.(*raftState).goFunc.func1()
+	github.com/hashicorp/raft@v1.8.0/state.go:149 +0x50 fp=0x40001a8fd0 sp=0x40001a8fa0 pc=0x2d9630
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40001a8fd0 sp=0x40001a8fd0 pc=0x8b684
+created by github.com/hashicorp/raft.(*raftState).goFunc in goroutine 1
+	github.com/hashicorp/raft@v1.8.0/state.go:147 +0x78
+
+goroutine 11 gp=0x4000003dc0 m=nil [select, 2 minutes]:
+runtime.gopark(0x40003c1e90?, 0x3?, 0xc0?, 0x3d?, 0x40003c1db2?)
+	runtime/proc.go:460 +0xc0 fp=0x40000a4c30 sp=0x40000a4c10 pc=0x838e0
+runtime.selectgo(0x40000a4e90, 0x40003c1dac, 0x0?, 0x0, 0x0?, 0x1)
+	runtime/select.go:351 +0x670 fp=0x40000a4d70 sp=0x40000a4c30 pc=0x63e90
+github.com/hashicorp/raft.(*Raft).runSnapshots(0x40000d2848)
+	github.com/hashicorp/raft@v1.8.0/snapshot.go:75 +0x11c fp=0x40000a4f80 sp=0x40000a4d70 pc=0x2d7abc
+github.com/hashicorp/raft.(*Raft).runSnapshots-fm()
+	<autogenerated>:1 +0x28 fp=0x40000a4fa0 sp=0x40000a4f80 pc=0x2dc3a8
+github.com/hashicorp/raft.(*raftState).goFunc.func1()
+	github.com/hashicorp/raft@v1.8.0/state.go:149 +0x50 fp=0x40000a4fd0 sp=0x40000a4fa0 pc=0x2d9630
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40000a4fd0 sp=0x40000a4fd0 pc=0x8b684
+created by github.com/hashicorp/raft.(*raftState).goFunc in goroutine 1
+	github.com/hashicorp/raft@v1.8.0/state.go:147 +0x78
+
+goroutine 17 gp=0x400024a000 m=nil [IO wait]:
+runtime.gopark(0x0?, 0x0?, 0x0?, 0x0?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x400012bb50 sp=0x400012bb30 pc=0x838e0
+runtime.netpollblock(0x7000000000?, 0x6?, 0x0?)
+	runtime/netpoll.go:575 +0x150 fp=0x400012bb90 sp=0x400012bb50 pc=0x496b0
+internal/poll.runtime_pollWait(0xffff5b1d1e00, 0x72)
+	runtime/netpoll.go:351 +0xa0 fp=0x400012bbc0 sp=0x400012bb90 pc=0x82ad0
+internal/poll.(*pollDesc).wait(0x400013a000?, 0xe20ec?, 0x0)
+	internal/poll/fd_poll_runtime.go:84 +0x28 fp=0x400012bbf0 sp=0x400012bbc0 pc=0xdf3b8
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Accept(0x400013a000)
+	internal/poll/fd_unix.go:613 +0x21c fp=0x400012bca0 sp=0x400012bbf0 pc=0xe0f3c
+net.(*netFD).accept(0x400013a000)
+	net/fd_unix.go:161 +0x28 fp=0x400012bd60 sp=0x400012bca0 pc=0x150568
+net.(*TCPListener).accept(0x400012e040)
+	net/tcpsock_posix.go:159 +0x24 fp=0x400012bdb0 sp=0x400012bd60 pc=0x15f624
+net.(*TCPListener).Accept(0x400012e040)
+	net/tcpsock.go:380 +0x2c fp=0x400012bdf0 sp=0x400012bdb0 pc=0x15ea8c
+net/http.(*onceCloseListener).Accept(0x4001787440?)
+	<autogenerated>:1 +0x2c fp=0x400012be10 sp=0x400012bdf0 pc=0x2428cc
+net/http.(*Server).Serve(0x4000248000, {0x4b9ef8, 0x400012e040})
+	net/http/server.go:3463 +0x24c fp=0x400012bf40 sp=0x400012be10 pc=0x22287c
+net/http.(*Server).ListenAndServe(0x4000248000)
+	net/http/server.go:3389 +0x80 fp=0x400012bf70 sp=0x400012bf40 pc=0x222520
+main.main.func1()
+	github.com/Khambampati-Subhash/raft-on-k8s-lab/cmd/kvnode/main.go:76 +0x20 fp=0x400012bfd0 sp=0x400012bf70 pc=0x2fb7d0
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x400012bfd0 sp=0x400012bfd0 pc=0x8b684
+created by main.main in goroutine 1
+	github.com/Khambampati-Subhash/raft-on-k8s-lab/cmd/kvnode/main.go:75 +0x73c
+
+goroutine 18 gp=0x400024a1c0 m=nil [select, 4 minutes, locked to thread]:
+runtime.gopark(0x40002567a0?, 0x2?, 0x98?, 0x66?, 0x400025678c?)
+	runtime/proc.go:460 +0xc0 fp=0x4000256600 sp=0x40002565e0 pc=0x838e0
+runtime.selectgo(0x40002567a0, 0x4000256788, 0x0?, 0x0, 0x0?, 0x1)
+	runtime/select.go:351 +0x670 fp=0x4000256740 sp=0x4000256600 pc=0x63e90
+runtime.ensureSigM.func1()
+	runtime/signal_unix.go:1085 +0x188 fp=0x40002567d0 sp=0x4000256740 pc=0x7e648
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40002567d0 sp=0x40002567d0 pc=0x8b684
+created by runtime.ensureSigM in goroutine 1
+	runtime/signal_unix.go:1068 +0xcc
+
+goroutine 33 gp=0x4000102700 m=3 mp=0x4000073008 [syscall, 4 minutes]:
+runtime.notetsleepg(0x7975e0, 0xffffffffffffffff)
+	runtime/lock_futex.go:123 +0x34 fp=0x400006ff90 sp=0x400006ff60 pc=0x23c64
+os/signal.signal_recv()
+	runtime/sigqueue.go:152 +0x30 fp=0x400006ffb0 sp=0x400006ff90 pc=0x85c50
+os/signal.loop()
+	os/signal/signal_unix.go:23 +0x1c fp=0x400006ffd0 sp=0x400006ffb0 pc=0x24571c
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x400006ffd0 sp=0x400006ffd0 pc=0x8b684
+created by os/signal.Notify.func1.1 in goroutine 1
+	os/signal/signal.go:152 +0x28
+
+goroutine 12 gp=0x40001a0000 m=nil [select, 4 minutes]:
+runtime.gopark(0x4000068fa8?, 0x2?, 0x0?, 0x0?, 0x4000068f94?)
+	runtime/proc.go:460 +0xc0 fp=0x4000068e10 sp=0x4000068df0 pc=0x838e0
+runtime.selectgo(0x4000068fa8, 0x4000068f90, 0x40000ca840?, 0x0, 0x4000068f98?, 0x1)
+	runtime/select.go:351 +0x670 fp=0x4000068f50 sp=0x4000068e10 pc=0x63e90
+os/signal.NotifyContext.func1()
+	os/signal/signal.go:289 +0x64 fp=0x4000068fd0 sp=0x4000068f50 pc=0x2452a4
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x4000068fd0 sp=0x4000068fd0 pc=0x8b684
+created by os/signal.NotifyContext in goroutine 1
+	os/signal/signal.go:288 +0x134
+
+goroutine 49 gp=0x4000282380 m=nil [IO wait]:
+runtime.gopark(0x40001db8f8?, 0xe0978?, 0x40?, 0x0?, 0x9?)
+	runtime/proc.go:460 +0xc0 fp=0x40001db8d0 sp=0x40001db8b0 pc=0x838e0
+runtime.netpollblock(0x0?, 0xffffffff?, 0xff?)
+	runtime/netpoll.go:575 +0x150 fp=0x40001db910 sp=0x40001db8d0 pc=0x496b0
+internal/poll.runtime_pollWait(0xffff5b1d1c00, 0x72)
+	runtime/netpoll.go:351 +0xa0 fp=0x40001db940 sp=0x40001db910 pc=0x82ad0
+internal/poll.(*pollDesc).wait(0x4000290000?, 0x40002aa000?, 0x0)
+	internal/poll/fd_poll_runtime.go:84 +0x28 fp=0x40001db970 sp=0x40001db940 pc=0xdf3b8
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0x4000290000, {0x40002aa000, 0x1000, 0x1000})
+	internal/poll/fd_unix.go:165 +0x1e0 fp=0x40001dba10 sp=0x40001db970 pc=0xe01f0
+net.(*netFD).Read(0x4000290000, {0x40002aa000?, 0x40001dbaa8?, 0x21939c?})
+	net/fd_posix.go:68 +0x28 fp=0x40001dba60 sp=0x40001dba10 pc=0x14f8b8
+net.(*conn).Read(0x4000294000, {0x40002aa000?, 0x72?, 0x0?})
+	net/net.go:196 +0x34 fp=0x40001dbab0 sp=0x40001dba60 pc=0x1582f4
+net/http.(*connReader).Read(0x40002a2000, {0x40002aa000, 0x1000, 0x1000})
+	net/http/server.go:812 +0x230 fp=0x40001dbb10 sp=0x40001dbab0 pc=0x2195a0
+bufio.(*Reader).fill(0x40002a8000)
+	bufio/bufio.go:113 +0xe0 fp=0x40001dbb50 sp=0x40001dbb10 pc=0x1be510
+bufio.(*Reader).Peek(0x40002a8000, 0x4)
+	bufio/bufio.go:152 +0x58 fp=0x40001dbb70 sp=0x40001dbb50 pc=0x1be658
+net/http.(*conn).serve(0x4000296000, {0x4ba558, 0x4000136180})
+	net/http/server.go:2145 +0x654 fp=0x40001dbfa0 sp=0x40001dbb70 pc=0x21dfd4
+net/http.(*Server).Serve.gowrap3()
+	net/http/server.go:3493 +0x2c fp=0x40001dbfd0 sp=0x40001dbfa0 pc=0x222bdc
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40001dbfd0 sp=0x40001dbfd0 pc=0x8b684
+created by net/http.(*Server).Serve in goroutine 17
+	net/http/server.go:3493 +0x384
+
+goroutine 38 gp=0x4000282540 m=nil [select]:
+runtime.gopark(0x40001ddf48?, 0x2?, 0x28?, 0xdd?, 0x40001dde80?)
+	runtime/proc.go:460 +0xc0 fp=0x40001ddce0 sp=0x40001ddcc0 pc=0x838e0
+runtime.selectgo(0x40001ddf48, 0x40001dde7c, 0x76ea20?, 0x0, 0x3751c0?, 0x1)
+	runtime/select.go:351 +0x670 fp=0x40001dde20 sp=0x40001ddce0 pc=0x63e90
+github.com/hashicorp/raft.emitLogStoreMetrics({0x4bb7c8, 0x40000e5da0}, {0x4000132260, 0x2, 0x2}, 0x2540be400, 0x4000166230)
+	github.com/hashicorp/raft@v1.8.0/log.go:179 +0x94 fp=0x40001ddf70 sp=0x40001dde20 pc=0x2c02d4
+github.com/hashicorp/raft.(*Raft).runLeader.gowrap1()
+	github.com/hashicorp/raft@v1.8.0/raft.go:500 +0x88 fp=0x40001ddfd0 sp=0x40001ddf70 pc=0x2c8908
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40001ddfd0 sp=0x40001ddfd0 pc=0x8b684
+created by github.com/hashicorp/raft.(*Raft).runLeader in goroutine 9
+	github.com/hashicorp/raft@v1.8.0/raft.go:500 +0x2d4
+
+goroutine 68 gp=0x4000102e00 m=nil [select]:
+runtime.gopark(0x40000a6f68?, 0x2?, 0x18?, 0x6e?, 0x40000a6f2c?)
+	runtime/proc.go:460 +0xc0 fp=0x40000a6da0 sp=0x40000a6d80 pc=0x838e0
+runtime.selectgo(0x40000a6f68, 0x40000a6f28, 0x4000235c20?, 0x0, 0x2?, 0x1)
+	runtime/select.go:351 +0x670 fp=0x40000a6ee0 sp=0x40000a6da0 pc=0x63e90
+github.com/hashicorp/raft.(*netPipeline).decodeResponses(0x40001a5cc0)
+	github.com/hashicorp/raft@v1.8.0/net_transport.go:841 +0x70 fp=0x40000a6fb0 sp=0x40000a6ee0 pc=0x2c3990
+github.com/hashicorp/raft.newNetPipeline.gowrap1()
+	github.com/hashicorp/raft@v1.8.0/net_transport.go:832 +0x28 fp=0x40000a6fd0 sp=0x40000a6fb0 pc=0x2c38e8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40000a6fd0 sp=0x40000a6fd0 pc=0x8b684
+created by github.com/hashicorp/raft.newNetPipeline in goroutine 22
+	github.com/hashicorp/raft@v1.8.0/net_transport.go:832 +0x10c
+
+goroutine 60 gp=0x4000282a80 m=nil [select, 4 minutes]:
+runtime.gopark(0x40000db920?, 0x2?, 0xb8?, 0xb7?, 0x40000db8f4?)
+	runtime/proc.go:460 +0xc0 fp=0x40000db770 sp=0x40000db750 pc=0x838e0
+runtime.selectgo(0x40000db920, 0x40000db8f0, 0x38d080?, 0x1, 0x40003dc008?, 0x1)
+	runtime/select.go:351 +0x670 fp=0x40000db8b0 sp=0x40000db770 pc=0x63e90
+github.com/hashicorp/raft.(*netPipeline).AppendEntries(0x4001313bc0, 0x40017862d0, 0x40014505f0)
+	github.com/hashicorp/raft@v1.8.0/net_transport.go:882 +0x18c fp=0x40000db950 sp=0x40000db8b0 pc=0x2c3c5c
+github.com/hashicorp/raft.(*Raft).pipelineSend(0x40000d2848, 0x40002c0750, {0x4ba048, 0x4001313bc0}, 0x40000dba10, 0xee22)
+	github.com/hashicorp/raft@v1.8.0/replication.go:520 +0x88 fp=0x40000db9b0 sp=0x40000db950 pc=0x2d6588
+github.com/hashicorp/raft.(*Raft).pipelineReplicate(0x40000d2848, 0x40002c0750)
+	github.com/hashicorp/raft@v1.8.0/replication.go:494 +0x568 fp=0x40000dbcf0 sp=0x40000db9b0 pc=0x2d6278
+github.com/hashicorp/raft.(*Raft).replicate(0x40000d2848, 0x40002c0750)
+	github.com/hashicorp/raft@v1.8.0/replication.go:188 +0xe0 fp=0x40000dbf80 sp=0x40000dbcf0 pc=0x2d3d80
+github.com/hashicorp/raft.(*Raft).startStopReplication.func1()
+	github.com/hashicorp/raft@v1.8.0/raft.go:613 +0x20 fp=0x40000dbfa0 sp=0x40000dbf80 pc=0x2c91e0
+github.com/hashicorp/raft.(*raftState).goFunc.func1()
+	github.com/hashicorp/raft@v1.8.0/state.go:149 +0x50 fp=0x40000dbfd0 sp=0x40000dbfa0 pc=0x2d9630
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40000dbfd0 sp=0x40000dbfd0 pc=0x8b684
+created by github.com/hashicorp/raft.(*raftState).goFunc in goroutine 9
+	github.com/hashicorp/raft@v1.8.0/state.go:147 +0x78
+
+goroutine 13 gp=0x40001a01c0 m=nil [select]:
+runtime.gopark(0x40000dde38?, 0x3?, 0xc0?, 0x1?, 0x40000ddcda?)
+	runtime/proc.go:460 +0xc0 fp=0x40000ddb30 sp=0x40000ddb10 pc=0x838e0
+runtime.selectgo(0x40000dde38, 0x40000ddcd4, 0x4?, 0x0, 0x26?, 0x1)
+	runtime/select.go:351 +0x670 fp=0x40000ddc70 sp=0x40000ddb30 pc=0x63e90
+github.com/hashicorp/raft.(*Raft).heartbeat(0x40000d2848, 0x40002c0750, 0x400009e620)
+	github.com/hashicorp/raft@v1.8.0/replication.go:400 +0x2a8 fp=0x40000ddf70 sp=0x40000ddc70 pc=0x2d57a8
+github.com/hashicorp/raft.(*Raft).replicate.func1()
+	github.com/hashicorp/raft@v1.8.0/replication.go:141 +0x24 fp=0x40000ddfa0 sp=0x40000ddf70 pc=0x2d4244
+github.com/hashicorp/raft.(*raftState).goFunc.func1()
+	github.com/hashicorp/raft@v1.8.0/state.go:149 +0x50 fp=0x40000ddfd0 sp=0x40000ddfa0 pc=0x2d9630
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40000ddfd0 sp=0x40000ddfd0 pc=0x8b684
+created by github.com/hashicorp/raft.(*raftState).goFunc in goroutine 60
+	github.com/hashicorp/raft@v1.8.0/state.go:147 +0x78
+
+goroutine 119 gp=0x40001a0700 m=nil [GC worker (idle), 2 minutes]:
+runtime.gopark(0x2e41fe65022?, 0x3?, 0x95?, 0x1e?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x400059af10 sp=0x400059aef0 pc=0x838e0
+runtime.gcBgMarkWorker(0x40001668c0)
+	runtime/mgc.go:1463 +0xe0 fp=0x400059afb0 sp=0x400059af10 pc=0x313f0
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1373 +0x28 fp=0x400059afd0 sp=0x400059afb0 pc=0x312d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x400059afd0 sp=0x400059afd0 pc=0x8b684
+created by runtime.gcBgMarkStartWorkers in goroutine 113
+	runtime/mgc.go:1373 +0x140
+
+goroutine 115 gp=0x4000103180 m=nil [GC worker (idle), 2 minutes]:
+runtime.gopark(0x2e34854ac0a?, 0x1?, 0x59?, 0x83?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x4000a2af10 sp=0x4000a2aef0 pc=0x838e0
+runtime.gcBgMarkWorker(0x40001668c0)
+	runtime/mgc.go:1463 +0xe0 fp=0x4000a2afb0 sp=0x4000a2af10 pc=0x313f0
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1373 +0x28 fp=0x4000a2afd0 sp=0x4000a2afb0 pc=0x312d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x4000a2afd0 sp=0x4000a2afd0 pc=0x8b684
+created by runtime.gcBgMarkStartWorkers in goroutine 113
+	runtime/mgc.go:1373 +0x140
+
+goroutine 22 gp=0x400024a700 m=nil [select]:
+runtime.gopark(0x40001dfb50?, 0x5?, 0x0?, 0xa7?, 0x40001df9fe?)
+	runtime/proc.go:460 +0xc0 fp=0x40001df870 sp=0x40001df850 pc=0x838e0
+runtime.selectgo(0x40001dfb50, 0x40001df9f4, 0x4ba048?, 0x0, 0x40001dfa10?, 0x1)
+	runtime/select.go:351 +0x670 fp=0x40001df9b0 sp=0x40001df870 pc=0x63e90
+github.com/hashicorp/raft.(*Raft).pipelineReplicate(0x40000d2848, 0x40002045b0)
+	github.com/hashicorp/raft@v1.8.0/replication.go:475 +0x448 fp=0x40001dfcf0 sp=0x40001df9b0 pc=0x2d6158
+github.com/hashicorp/raft.(*Raft).replicate(0x40000d2848, 0x40002045b0)
+	github.com/hashicorp/raft@v1.8.0/replication.go:188 +0xe0 fp=0x40001dff80 sp=0x40001dfcf0 pc=0x2d3d80
+github.com/hashicorp/raft.(*Raft).startStopReplication.func1()
+	github.com/hashicorp/raft@v1.8.0/raft.go:613 +0x20 fp=0x40001dffa0 sp=0x40001dff80 pc=0x2c91e0
+github.com/hashicorp/raft.(*raftState).goFunc.func1()
+	github.com/hashicorp/raft@v1.8.0/state.go:149 +0x50 fp=0x40001dffd0 sp=0x40001dffa0 pc=0x2d9630
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40001dffd0 sp=0x40001dffd0 pc=0x8b684
+created by github.com/hashicorp/raft.(*raftState).goFunc in goroutine 9
+	github.com/hashicorp/raft@v1.8.0/state.go:147 +0x78
+
+goroutine 23 gp=0x400024a8c0 m=nil [select]:
+runtime.gopark(0x40001f5e38?, 0x3?, 0xc0?, 0xa8?, 0x40001f5cda?)
+	runtime/proc.go:460 +0xc0 fp=0x40001f5b30 sp=0x40001f5b10 pc=0x838e0
+runtime.selectgo(0x40001f5e38, 0x40001f5cd4, 0x4?, 0x0, 0x26?, 0x1)
+	runtime/select.go:351 +0x670 fp=0x40001f5c70 sp=0x40001f5b30 pc=0x63e90
+github.com/hashicorp/raft.(*Raft).heartbeat(0x40000d2848, 0x40002045b0, 0x40002502a0)
+	github.com/hashicorp/raft@v1.8.0/replication.go:400 +0x2a8 fp=0x40001f5f70 sp=0x40001f5c70 pc=0x2d57a8
+github.com/hashicorp/raft.(*Raft).replicate.func1()
+	github.com/hashicorp/raft@v1.8.0/replication.go:141 +0x24 fp=0x40001f5fa0 sp=0x40001f5f70 pc=0x2d4244
+github.com/hashicorp/raft.(*raftState).goFunc.func1()
+	github.com/hashicorp/raft@v1.8.0/state.go:149 +0x50 fp=0x40001f5fd0 sp=0x40001f5fa0 pc=0x2d9630
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40001f5fd0 sp=0x40001f5fd0 pc=0x8b684
+created by github.com/hashicorp/raft.(*raftState).goFunc in goroutine 22
+	github.com/hashicorp/raft@v1.8.0/state.go:147 +0x78
+
+goroutine 116 gp=0x400024aa80 m=nil [GC worker (idle)]:
+runtime.gopark(0x30010cc86c3?, 0x3?, 0xe9?, 0xdc?, 0x8b684?)
+	runtime/proc.go:460 +0xc0 fp=0x40000a2f10 sp=0x40000a2ef0 pc=0x838e0
+runtime.gcBgMarkWorker(0x40001668c0)
+	runtime/mgc.go:1463 +0xe0 fp=0x40000a2fb0 sp=0x40000a2f10 pc=0x313f0
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1373 +0x28 fp=0x40000a2fd0 sp=0x40000a2fb0 pc=0x312d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40000a2fd0 sp=0x40000a2fd0 pc=0x8b684
+created by runtime.gcBgMarkStartWorkers in goroutine 113
+	runtime/mgc.go:1373 +0x140
+
+goroutine 118 gp=0x400024ac40 m=nil [GC worker (idle), 2 minutes]:
+runtime.gopark(0x2e41fe5b6fa?, 0x3?, 0xeb?, 0xb1?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x40001a6f10 sp=0x40001a6ef0 pc=0x838e0
+runtime.gcBgMarkWorker(0x40001668c0)
+	runtime/mgc.go:1463 +0xe0 fp=0x40001a6fb0 sp=0x40001a6f10 pc=0x313f0
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1373 +0x28 fp=0x40001a6fd0 sp=0x40001a6fb0 pc=0x312d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40001a6fd0 sp=0x40001a6fd0 pc=0x8b684
+created by runtime.gcBgMarkStartWorkers in goroutine 113
+	runtime/mgc.go:1373 +0x140
+
+goroutine 117 gp=0x400024ae00 m=nil [GC worker (idle)]:
+runtime.gopark(0x30010ccc22b?, 0x3?, 0xeb?, 0xbe?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x40001a9f10 sp=0x40001a9ef0 pc=0x838e0
+runtime.gcBgMarkWorker(0x40001668c0)
+	runtime/mgc.go:1463 +0xe0 fp=0x40001a9fb0 sp=0x40001a9f10 pc=0x313f0
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1373 +0x28 fp=0x40001a9fd0 sp=0x40001a9fb0 pc=0x312d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40001a9fd0 sp=0x40001a9fd0 pc=0x8b684
+created by runtime.gcBgMarkStartWorkers in goroutine 113
+	runtime/mgc.go:1373 +0x140
+
+goroutine 69 gp=0x40001a08c0 m=nil [select]:
+runtime.gopark(0x40000a7f10?, 0x2?, 0x68?, 0x7d?, 0x40000a7eb4?)
+	runtime/proc.go:460 +0xc0 fp=0x40000a7d30 sp=0x40000a7d10 pc=0x838e0
+runtime.selectgo(0x40000a7f10, 0x40000a7eb0, 0xc2af3cd32475d61c?, 0x0, 0x76ea20?, 0x1)
+	runtime/select.go:351 +0x670 fp=0x40000a7e70 sp=0x40000a7d30 pc=0x63e90
+github.com/hashicorp/raft.(*Raft).pipelineDecode(0x40000d2848, 0x40002045b0, {0x4ba048?, 0x40001a5cc0?}, 0x400009eb60, 0x0?)
+	github.com/hashicorp/raft@v1.8.0/replication.go:538 +0xb0 fp=0x40000a7f60 sp=0x40000a7e70 pc=0x2d67b0
+github.com/hashicorp/raft.(*Raft).pipelineReplicate.func2()
+	github.com/hashicorp/raft@v1.8.0/replication.go:467 +0x28 fp=0x40000a7fa0 sp=0x40000a7f60 pc=0x2d63b8
+github.com/hashicorp/raft.(*raftState).goFunc.func1()
+	github.com/hashicorp/raft@v1.8.0/state.go:149 +0x50 fp=0x40000a7fd0 sp=0x40000a7fa0 pc=0x2d9630
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40000a7fd0 sp=0x40000a7fd0 pc=0x8b684
+created by github.com/hashicorp/raft.(*raftState).goFunc in goroutine 22
+	github.com/hashicorp/raft@v1.8.0/state.go:147 +0x78
+
+goroutine 114 gp=0x400024afc0 m=nil [GC worker (idle), 2 minutes]:
+runtime.gopark(0x798160?, 0x1?, 0xd1?, 0x69?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x40000a1f10 sp=0x40000a1ef0 pc=0x838e0
+runtime.gcBgMarkWorker(0x40001668c0)
+	runtime/mgc.go:1463 +0xe0 fp=0x40000a1fb0 sp=0x40000a1f10 pc=0x313f0
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1373 +0x28 fp=0x40000a1fd0 sp=0x40000a1fb0 pc=0x312d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40000a1fd0 sp=0x40000a1fd0 pc=0x8b684
+created by runtime.gcBgMarkStartWorkers in goroutine 113
+	runtime/mgc.go:1373 +0x140
+
+goroutine 120 gp=0x4000103340 m=nil [GC worker (idle), 2 minutes]:
+runtime.gopark(0x2e34855be4a?, 0x3?, 0x98?, 0x7b?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x400059ef10 sp=0x400059eef0 pc=0x838e0
+runtime.gcBgMarkWorker(0x40001668c0)
+	runtime/mgc.go:1463 +0xe0 fp=0x400059efb0 sp=0x400059ef10 pc=0x313f0
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1373 +0x28 fp=0x400059efd0 sp=0x400059efb0 pc=0x312d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x400059efd0 sp=0x400059efd0 pc=0x8b684
+created by runtime.gcBgMarkStartWorkers in goroutine 113
+	runtime/mgc.go:1373 +0x140
+
+goroutine 121 gp=0x4000103500 m=nil [GC worker (idle), 2 minutes]:
+runtime.gopark(0x798160?, 0x1?, 0x8b?, 0xd7?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x40000a3f10 sp=0x40000a3ef0 pc=0x838e0
+runtime.gcBgMarkWorker(0x40001668c0)
+	runtime/mgc.go:1463 +0xe0 fp=0x40000a3fb0 sp=0x40000a3f10 pc=0x313f0
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1373 +0x28 fp=0x40000a3fd0 sp=0x40000a3fb0 pc=0x312d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40000a3fd0 sp=0x40000a3fd0 pc=0x8b684
+created by runtime.gcBgMarkStartWorkers in goroutine 113
+	runtime/mgc.go:1373 +0x140
+
+goroutine 122 gp=0x40001036c0 m=nil [GC worker (idle), 2 minutes]:
+runtime.gopark(0x2e34855fa06?, 0x1?, 0x7b?, 0x53?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x40001adf10 sp=0x40001adef0 pc=0x838e0
+runtime.gcBgMarkWorker(0x40001668c0)
+	runtime/mgc.go:1463 +0xe0 fp=0x40001adfb0 sp=0x40001adf10 pc=0x313f0
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1373 +0x28 fp=0x40001adfd0 sp=0x40001adfb0 pc=0x312d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40001adfd0 sp=0x40001adfd0 pc=0x8b684
+created by runtime.gcBgMarkStartWorkers in goroutine 113
+	runtime/mgc.go:1373 +0x140
+
+goroutine 123 gp=0x4000103880 m=nil [GC worker (idle), 2 minutes]:
+runtime.gopark(0x798160?, 0x1?, 0x55?, 0x58?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x400059ff10 sp=0x400059fef0 pc=0x838e0
+runtime.gcBgMarkWorker(0x40001668c0)
+	runtime/mgc.go:1463 +0xe0 fp=0x400059ffb0 sp=0x400059ff10 pc=0x313f0
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1373 +0x28 fp=0x400059ffd0 sp=0x400059ffb0 pc=0x312d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x400059ffd0 sp=0x400059ffd0 pc=0x8b684
+created by runtime.gcBgMarkStartWorkers in goroutine 113
+	runtime/mgc.go:1373 +0x140
+
+goroutine 124 gp=0x4000103a40 m=nil [GC worker (idle), 2 minutes]:
+runtime.gopark(0x798160?, 0x1?, 0x4d?, 0x6d?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x40001acf10 sp=0x40001acef0 pc=0x838e0
+runtime.gcBgMarkWorker(0x40001668c0)
+	runtime/mgc.go:1463 +0xe0 fp=0x40001acfb0 sp=0x40001acf10 pc=0x313f0
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1373 +0x28 fp=0x40001acfd0 sp=0x40001acfb0 pc=0x312d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x40001acfd0 sp=0x40001acfd0 pc=0x8b684
+created by runtime.gcBgMarkStartWorkers in goroutine 113
+	runtime/mgc.go:1373 +0x140
+
+goroutine 125 gp=0x4000103c00 m=nil [GC worker (idle), 2 minutes]:
+runtime.gopark(0x2e41fe6e24b?, 0x3?, 0x4c?, 0x4c?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x400059df10 sp=0x400059def0 pc=0x838e0
+runtime.gcBgMarkWorker(0x40001668c0)
+	runtime/mgc.go:1463 +0xe0 fp=0x400059dfb0 sp=0x400059df10 pc=0x313f0
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1373 +0x28 fp=0x400059dfd0 sp=0x400059dfb0 pc=0x312d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x400059dfd0 sp=0x400059dfd0 pc=0x8b684
+created by runtime.gcBgMarkStartWorkers in goroutine 113
+	runtime/mgc.go:1373 +0x140
+
+goroutine 126 gp=0x4000103dc0 m=nil [GC worker (idle), 2 minutes]:
+runtime.gopark(0x798160?, 0x1?, 0x58?, 0x89?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x4000127f10 sp=0x4000127ef0 pc=0x838e0
+runtime.gcBgMarkWorker(0x40001668c0)
+	runtime/mgc.go:1463 +0xe0 fp=0x4000127fb0 sp=0x4000127f10 pc=0x313f0
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1373 +0x28 fp=0x4000127fd0 sp=0x4000127fb0 pc=0x312d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x4000127fd0 sp=0x4000127fd0 pc=0x8b684
+created by runtime.gcBgMarkStartWorkers in goroutine 113
+	runtime/mgc.go:1373 +0x140
+
+goroutine 127 gp=0x4000352000 m=nil [GC worker (idle), 2 minutes]:
+runtime.gopark(0x798160?, 0x1?, 0x98?, 0x20?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x400059cf10 sp=0x400059cef0 pc=0x838e0
+runtime.gcBgMarkWorker(0x40001668c0)
+	runtime/mgc.go:1463 +0xe0 fp=0x400059cfb0 sp=0x400059cf10 pc=0x313f0
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1373 +0x28 fp=0x400059cfd0 sp=0x400059cfb0 pc=0x312d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x400059cfd0 sp=0x400059cfd0 pc=0x8b684
+created by runtime.gcBgMarkStartWorkers in goroutine 113
+	runtime/mgc.go:1373 +0x140
+
+goroutine 128 gp=0x40003521c0 m=nil [GC worker (idle)]:
+runtime.gopark(0x798160?, 0x1?, 0x4a?, 0x24?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x4000126f10 sp=0x4000126ef0 pc=0x838e0
+runtime.gcBgMarkWorker(0x40001668c0)
+	runtime/mgc.go:1463 +0xe0 fp=0x4000126fb0 sp=0x4000126f10 pc=0x313f0
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1373 +0x28 fp=0x4000126fd0 sp=0x4000126fb0 pc=0x312d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x4000126fd0 sp=0x4000126fd0 pc=0x8b684
+created by runtime.gcBgMarkStartWorkers in goroutine 113
+	runtime/mgc.go:1373 +0x140
+
+goroutine 129 gp=0x4000352380 m=nil [GC worker (idle), 2 minutes]:
+runtime.gopark(0x798160?, 0x1?, 0xd1?, 0xcb?, 0x0?)
+	runtime/proc.go:460 +0xc0 fp=0x400012af10 sp=0x400012aef0 pc=0x838e0
+runtime.gcBgMarkWorker(0x40001668c0)
+	runtime/mgc.go:1463 +0xe0 fp=0x400012afb0 sp=0x400012af10 pc=0x313f0
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1373 +0x28 fp=0x400012afd0 sp=0x400012afb0 pc=0x312d8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x400012afd0 sp=0x400012afd0 pc=0x8b684
+created by runtime.gcBgMarkStartWorkers in goroutine 113
+	runtime/mgc.go:1373 +0x140
+
+goroutine 123204 gp=0x400017ce00 m=nil [select, 4 minutes]:
+runtime.gopark(0x400012df48?, 0x2?, 0x18?, 0xde?, 0x400012df24?)
+	runtime/proc.go:460 +0xc0 fp=0x400012dda0 sp=0x400012dd80 pc=0x838e0
+runtime.selectgo(0x400012df48, 0x400012df20, 0x4001450500?, 0x1, 0x4000bb7f88?, 0x1)
+	runtime/select.go:351 +0x670 fp=0x400012dee0 sp=0x400012dda0 pc=0x63e90
+github.com/hashicorp/raft.(*netPipeline).decodeResponses(0x4001313bc0)
+	github.com/hashicorp/raft@v1.8.0/net_transport.go:849 +0x178 fp=0x400012dfb0 sp=0x400012dee0 pc=0x2c3a98
+github.com/hashicorp/raft.newNetPipeline.gowrap1()
+	github.com/hashicorp/raft@v1.8.0/net_transport.go:832 +0x28 fp=0x400012dfd0 sp=0x400012dfb0 pc=0x2c38e8
+runtime.goexit({})
+	runtime/asm_arm64.s:1268 +0x4 fp=0x400012dfd0 sp=0x400012dfd0 pc=0x8b684
+created by github.com/hashicorp/raft.newNetPipeline in goroutine 60
+	github.com/hashicorp/raft@v1.8.0/net_transport.go:832 +0x10c
+
+r0      0x7702b0
+r1      0x80
+r2      0x0
+r3      0x0
+r4      0x0
+r5      0x0
+r6      0x8
+r7      0x57d
+r8      0x62
+r9      0x1
+r10     0x0
+r11     0x10
+r12     0x4000
+r13     0x1
+r14     0x4003b914c0
+r15     0x4000224980
+r16     0xffffcd3c3fc0
+r17     0xffffcd3d39e0
+r18     0x0
+r19     0xe10
+r20     0xffffcd3d38e0
+r21     0x770160
+r22     0x4000004000
+r23     0x634f
+r24     0x4005b9b90c
+r25     0x4000040708
+r26     0x43cc68
+r27     0x759000
+r28     0x76f020
+r29     0xffffcd3d3898
+lr      0x4a428
+sp      0xffffcd3d38a0
+pc      0x8cadc
+fault   0x0

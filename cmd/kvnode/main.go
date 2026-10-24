@@ -34,6 +34,7 @@ func main() {
 		lease      = flag.Duration("leader-lease-timeout", 0, "Raft leader lease timeout (0 = library default 500ms)")
 		applyTO    = flag.Duration("apply-timeout", 5*time.Second, "max time to wait for a write to commit")
 		snapThresh = flag.Uint64("snapshot-threshold", 1024, "log entries between snapshots")
+		debugEP    = flag.Bool("debug-endpoints", false, "wrap the log store in a fault injector and expose POST /debug/store-fault")
 	)
 	flag.Parse()
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
@@ -50,6 +51,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	var opts []httpapi.Option
+	if *debugEP {
+		fs := node.NewFaultLogStore(deps.Logs)
+		deps.Logs = fs
+		opts = append(opts, httpapi.WithFaultInjector(fs))
+	}
 	n, err := node.New(node.Config{
 		ID:                 *id,
 		Bootstrap:          bootstrap,
@@ -64,7 +71,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	srv := &http.Server{Addr: *httpAddr, Handler: httpapi.New(n)}
+	srv := &http.Server{Addr: *httpAddr, Handler: httpapi.New(n, opts...)}
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("http: %v", err)

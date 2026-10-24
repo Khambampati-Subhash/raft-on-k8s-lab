@@ -37,3 +37,9 @@ type JoinRequest struct {
 type LeaveRequest struct {
 	ID string `json:"id"`
 }
+
+// StoreFault is the body of POST /debug/store-fault.
+type StoreFault struct {
+	Delay    string  `json:"delay,omitempty"` // Go duration, e.g. "200ms"; empty = 0
+	FailRate float64 `json:"failRate,omitempty"`
+}

@@ -35,6 +35,9 @@ spec:
             - --bootstrap=auto # only kv-0, and only with no existing state
             - --join=http://kv-0.kv.raftlab.svc.cluster.local:8080,http://kv-1.kv.raftlab.svc.cluster.local:8080,http://kv-2.kv.raftlab.svc.cluster.local:8080
             - --data=/data
+            # Fault injector for E8 (Chaos Mesh IOChaos doesn't run on arm64).
+            # Off until someone POSTs /debug/store-fault. Lab only.
+            - --debug-endpoints=true
           env:
             - name: POD_NAME
               valueFrom: {fieldRef: {fieldPath: metadata.name}}

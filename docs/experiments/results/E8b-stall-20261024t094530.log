@@ -1,0 +1,12 @@
+# E8b run 2 aftermath (run E8b-20261024t094005): same stall
+
+## raftctl status at 09:45:30 (fault off since ~09:43:21)
+kv-0 leader commit 368184 lastLog 368184 lastContact 0
+kv-1 follower commit 52647 lastLog 52647 lastContact 63.701542ms
+kv-2 follower commit 368184 lastLog 368184 lastContact 57.188875ms
+
+## leader kv-0: last pipeline lines about kv-1
+2026-10-24T09:42:40.856Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:42:40.879Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:42:40.879Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:42:40.902Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"

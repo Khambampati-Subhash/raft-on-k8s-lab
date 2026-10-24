@@ -1,0 +1,39 @@
+# E7 probe 1 (TimeChaos -5m on leader kv-1, applied together with E8a/E8b IOChaos probes)
+
+## kv-1 previous container: termination
+{"containerID":"containerd://08cf4648c0dea336b218de9614896d47b415e0f2db6e6d765c4f05837f623f6e","exitCode":139,"finishedAt":"2026-10-24T09:15:39Z","reason":"Error","startedAt":"2026-10-24T09:11:29Z"}
+
+## kv-1 previous container log, from the last raft line to the end of the first stack
+2026-10-24T09:15:22.406Z [INFO]  raft: snapshot complete up to: index=210908
+SIGSEGV: segmentation violation
+PC=0xffffb1e0e014 m=12 sigcode=1 addr=0x18
+
+goroutine 0 gp=0x40001d9880 m=12 mp=0x40004c0008 [idle]:
+runtime.nanotime(...)
+	runtime/time_nofake.go:33
+runtime.findRunnable()
+	runtime/proc.go:3730 +0xa84 fp=0x4000111f10 sp=0x4000111d40 pc=0x57144
+runtime.schedule()
+	runtime/proc.go:4138 +0x90 fp=0x4000111f50 sp=0x4000111f10 pc=0x58c40
+runtime.park_m(0x4000bb7c00)
+	runtime/proc.go:4266 +0x2ac fp=0x4000111fb0 sp=0x4000111f50 pc=0x5911c
+runtime.mcall()
+	runtime/asm_arm64.s:241 +0x54 fp=0x4000111fc0 sp=0x4000111fb0 pc=0x892b4
+
+
+# E7 probe 2 (TimeChaos -5m ALONE on leader kv-1, duration 15s)
+restartCount 1 -> 2 within 14s of apply; chaos record: raftlab/kv-1/kvnode phase=Injected injected=1
+
+## kv-1 previous container: termination
+{"containerID":"containerd://d0c38f54e04b1c00513d82dfc29f054f01a24957d1f77c4d3fdf7d0a85394689","exitCode":139,"finishedAt":"2026-10-24T09:24:15Z","reason":"Error","startedAt":"2026-10-24T09:15:39Z"}
+
+## kv-1 previous container log, crash
+SIGSEGV: segmentation violation
+PC=0xffffb680c014 m=3 sigcode=1 addr=0x18
+
+goroutine 0 gp=0x4000003180 m=3 mp=0x4000073008 [idle]:
+runtime.nanotime(...)
+	runtime/time_nofake.go:33
+runtime.findRunnable()
+	runtime/proc.go:3730 +0xa84 fp=0x400008bf10 sp=0x400008bd40 pc=0x57144
+runtime.schedule()

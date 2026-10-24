@@ -15,6 +15,7 @@ import (
 	"sort"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/Khambampati-Subhash/raft-on-k8s-lab/internal/api"
 )
@@ -280,4 +281,28 @@ func (c *Cluster) admin(ctx context.Context, path string, v any) error {
 // escapeKey escapes each path segment but keeps '/' so keys like a/b/c work.
 func escapeKey(k string) string {
 	return (&url.URL{Path: k}).EscapedPath()
+}
+
+// Fault sets a storage fault on one node directly (not via the leader).
+// The node must run with --debug-endpoints. Zero values turn it off.
+func (c *Cluster) Fault(ctx context.Context, id string, delay time.Duration, failRate float64) error {
+	u := c.urlFor(ctx, id)
+	if u == "" {
+		return fmt.Errorf("node %q not found", id)
+	}
+	b, _ := json.Marshal(api.StoreFault{Delay: delay.String(), FailRate: failRate})
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, u+"/debug/store-fault", bytes.NewReader(b))
+	if err != nil {
+		return err
+	}
+	resp, err := c.hc.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusNoContent {
+		msg, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("%s: HTTP %d: %s", id, resp.StatusCode, bytes.TrimSpace(msg))
+	}
+	return nil
 }

@@ -1,0 +1,23 @@
+# E8 probe (IOChaos latency on leader / fault on follower)
+
+## iochaos events
+3m42s       Warning   Failed            iochaos/e8a-disk-latency   Failed to apply chaos: failed to apply for pod raftlab/kv-1: rpc error: code = Canceled desc = toda update RPC failed: context canceled
+3m21s       Warning   Failed            iochaos/e8a-disk-latency   Failed to apply chaos: failed to apply for pod raftlab/kv-1: rpc error: code = Canceled desc = toda update RPC failed: context canceled
+3m21s       Normal    TimeUp            iochaos/e8a-disk-latency   Time up according to the duration
+3m21s       Warning   Failed            iochaos/e8a-disk-latency   Failed to apply chaos: failed to apply for pod raftlab/kv-1: rpc error: code = Canceled desc = toda update RPC failed: context canceled
+119s        Warning   Failed            iochaos/e8a-disk-latency   Failed to apply chaos: failed to apply for pod raftlab/kv-1: rpc error: code = Canceled desc = toda update RPC failed: context canceled
+119s        Warning   Failed            iochaos/e8a-disk-latency   Failed to apply chaos: failed to apply for pod raftlab/kv-1: rpc error: code = Canceled desc = toda update RPC failed: context canceled
+
+## chaos-daemon
+2026-10-24T09:18:23.371Z	INFO	chaos-daemon.daemon-server	chaosdaemon/server.go:187	executing	{"namespacedName": "raftlab/kv-0", "cmd": "/usr/local/bin/toda --path /data --verbose info"}
+2026-10-24T09:18:23.371Z	INFO	chaos-daemon.daemon-server.background-process-manager.process-builder	pb/chaosdaemon.pb.go:4405	build command	{"command": "/usr/local/bin/nsexec -l -p /proc/9795/ns/pid -m /proc/9795/ns/mnt -- /usr/local/bin/toda --path /data --verbose info"}
+rosetta error: failed to open elf at /lib64/ld-linux-x86-64.so.2
+2026-10-24T09:18:23.375Z	ERROR	chaos-daemon.daemon-server	chaosdaemon/server.go:187	update RPC call failed	{"namespacedName": "raftlab/kv-0", "error": "context canceled"}
+2026-10-24T09:21:07.225Z	INFO	chaos-daemon.daemon-server	chaosdaemon/server.go:187	executing	{"namespacedName": "raftlab/kv-0", "cmd": "/usr/local/bin/toda --path /data --verbose info"}
+2026-10-24T09:21:07.225Z	INFO	chaos-daemon.daemon-server.background-process-manager.process-builder	pb/chaosdaemon.pb.go:4405	build command	{"command": "/usr/local/bin/nsexec -l -p /proc/9795/ns/pid -m /proc/9795/ns/mnt -- /usr/local/bin/toda --path /data --verbose info"}
+rosetta error: failed to open elf at /lib64/ld-linux-x86-64.so.2
+2026-10-24T09:21:07.229Z	ERROR	chaos-daemon.daemon-server	chaosdaemon/server.go:187	update RPC call failed	{"namespacedName": "raftlab/kv-0", "error": "context canceled"}
+
+## binary check (docker create --platform linux/arm64 ghcr.io/chaos-mesh/chaos-daemon:v2.8.6; file)
+toda:         ELF 64-bit LSB pie executable, x86-64, dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2
+chaos-daemon: ELF 64-bit LSB executable, ARM aarch64, dynamically linked, interpreter /lib/ld-linux-aarch64.so.1

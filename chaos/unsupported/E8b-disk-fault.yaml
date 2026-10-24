@@ -1,0 +1,19 @@
+# E8b: half of the filesystem operations under one follower's /data fail with
+# EIO (errno 5).
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: e8b-disk-fault
+  namespace: raftlab
+spec:
+  action: fault
+  mode: one
+  duration: 40s
+  errno: 5
+  volumePath: /data
+  path: /data/**
+  percent: 50
+  containerNames: [kvnode]
+  selector:
+    namespaces: [raftlab]
+    labelSelectors: {app: kv, raft-rank: f1}

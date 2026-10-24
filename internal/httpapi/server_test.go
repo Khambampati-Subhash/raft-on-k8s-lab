@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/Khambampati-Subhash/raft-on-k8s-lab/internal/api"
 	"github.com/Khambampati-Subhash/raft-on-k8s-lab/internal/node"
@@ -143,5 +144,39 @@ func TestBodyTooLarge(t *testing.T) {
 	resp := call(t, &fakeStore{}, "PUT", "/kv/a", strings.Repeat("x", 1<<20+1))
 	if resp.StatusCode != http.StatusRequestEntityTooLarge {
 		t.Fatalf("code = %d, want 413", resp.StatusCode)
+	}
+}
+
+type fakeFaulter struct {
+	delay    time.Duration
+	failRate float64
+}
+
+func (f *fakeFaulter) SetFault(d time.Duration, r float64) { f.delay, f.failRate = d, r }
+
+func TestDebugStoreFaultEndpoint(t *testing.T) {
+	post := func(h http.Handler, body string) int {
+		rec := httptest.NewRecorder()
+		h.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/debug/store-fault", strings.NewReader(body)))
+		return rec.Code
+	}
+	if code := post(New(&fakeStore{}), `{"delay":"200ms","failRate":0.5}`); code != http.StatusNotFound {
+		t.Fatalf("without injector: %d, want 404", code)
+	}
+	f := &fakeFaulter{}
+	h := New(&fakeStore{}, WithFaultInjector(f))
+	if code := post(h, `{"delay":"200ms","failRate":0.5}`); code != http.StatusNoContent {
+		t.Fatalf("with injector: %d, want 204", code)
+	}
+	if f.delay != 200*time.Millisecond || f.failRate != 0.5 {
+		t.Fatalf("faulter got %v %v", f.delay, f.failRate)
+	}
+	if code := post(h, `{}`); code != http.StatusNoContent || f.delay != 0 || f.failRate != 0 {
+		t.Fatalf("zero values must turn faults off: code %d, got %v %v", code, f.delay, f.failRate)
+	}
+	for _, bad := range []string{`{"delay":"soon"}`, `{"failRate":1.5}`, `{"failRate":-1}`, `nope`} {
+		if code := post(h, bad); code != http.StatusBadRequest {
+			t.Fatalf("%s: %d, want 400", bad, code)
+		}
 	}
 }

@@ -54,3 +54,5 @@ was wrong, it stays, marked as such.
 | [E4](E4-isolate-leader.md) | partition the leader away from both followers | Yes. Old leader stepped down in 0.68 s, 2.16 s window, exactly 4 indeterminate (all absent), Lost 0 |
 | [E5](E5-latency.md) | 100 ms / 800 ms latency between nodes | 100 ms yes. **800 ms no**: RTT above the 500 ms leader lease means no leader survives; 40 s of zero writes, Lost 0 |
 | [E6](E6-packet-loss.md) | 10 % / 40 % packet loss between nodes | Yes. 10 %: no elections. 40 %: 10 leader changes, 14 windows, Lost 0 |
+| [E7](E7-clock-skew.md) | leader clock −5 min | **Not run.** TimeChaos segfaults Go's runtime on arm64. Code reading of hashicorp/raft says the timers are monotonic |
+| [E8](E8-disk.md) | slow / failing log appends (in-process injector) | Partly. Lost 0 and no elections, but **E8b found a replication deadlock in hashicorp/raft v1.8.0**: the faulty follower stops replicating for good while looking healthy (2/2 runs) |

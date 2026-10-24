@@ -1,0 +1,85 @@
+# E8b aftermath: follower kv-1 stopped receiving log entries
+
+## raftctl status at 09:38:50 (fault off since ~09:34:52)
+kv-0 leader term 2 commit 360052 lastLog 360052 lastContact 0
+kv-1 follower term 2 commit 60889 lastLog 60889 lastContact 26.766875ms
+kv-2 follower term 2 commit 360052 lastLog 360052 lastContact 87.558042ms
+
+## kv-1: append failures per second
+  13 09:34:14
+  41 09:34:15
+
+## kv-0 (leader): every log line about kv-1
+2026-10-24T09:33:48.061Z [INFO]  raft: updating configuration: command=AddVoter server-id=kv-1 server-addr=kv-1.kv.raftlab.svc.cluster.local:7000 servers="[{Suffrage:Voter ID:kv-0 Address:kv-0.kv.raft
+2026-10-24T09:33:48.063Z [INFO]  raft: added peer, starting replication: peer=kv-1
+2026-10-24T09:33:48.064Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=1
+2026-10-24T09:33:48.065Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:33:48.885Z [INFO]  raft: updating configuration: command=AddVoter server-id=kv-2 server-addr=kv-2.kv.raftlab.svc.cluster.local:7000 servers="[{Suffrage:Voter ID:kv-0 Address:kv-0.kv.raft
+2026-10-24T09:34:14.853Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:14.854Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:14.855Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:14.856Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59069
+2026-10-24T09:34:14.867Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:14.868Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:14.869Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59107
+2026-10-24T09:34:14.879Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:14.881Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:14.883Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:14.883Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:14.884Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:14.885Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:14.885Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59153
+2026-10-24T09:34:14.895Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59152
+2026-10-24T09:34:14.906Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59151
+2026-10-24T09:34:14.926Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59150
+2026-10-24T09:34:14.966Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59149
+2026-10-24T09:34:15.047Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.047Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.048Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59155
+2026-10-24T09:34:15.060Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59218
+2026-10-24T09:34:15.072Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59217
+2026-10-24T09:34:15.083Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59280
+2026-10-24T09:34:15.094Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59279
+2026-10-24T09:34:15.107Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59406
+2026-10-24T09:34:15.121Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59597
+2026-10-24T09:34:15.131Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59596
+2026-10-24T09:34:15.142Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59595
+2026-10-24T09:34:15.164Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.166Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.167Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59833
+2026-10-24T09:34:15.179Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59896
+2026-10-24T09:34:15.191Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59959
+2026-10-24T09:34:15.202Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=59958
+2026-10-24T09:34:15.213Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60021
+2026-10-24T09:34:15.224Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60020
+2026-10-24T09:34:15.234Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60019
+2026-10-24T09:34:15.256Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.256Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.257Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60080
+2026-10-24T09:34:15.269Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60143
+2026-10-24T09:34:15.279Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60142
+2026-10-24T09:34:15.290Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60141
+2026-10-24T09:34:15.311Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60204
+2026-10-24T09:34:15.323Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60267
+2026-10-24T09:34:15.334Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60266
+2026-10-24T09:34:15.345Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60329
+2026-10-24T09:34:15.356Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60328
+2026-10-24T09:34:15.367Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.370Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.372Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60616
+2026-10-24T09:34:15.383Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60679
+2026-10-24T09:34:15.395Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.395Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.396Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60715
+2026-10-24T09:34:15.408Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.410Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.411Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60834
+2026-10-24T09:34:15.422Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.424Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.425Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.426Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.426Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.427Z [INFO]  raft: aborting pipeline replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"
+2026-10-24T09:34:15.428Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60885
+2026-10-24T09:34:15.438Z [WARN]  raft: appendEntries rejected, sending older logs: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}" next=60884
+2026-10-24T09:34:15.449Z [INFO]  raft: pipelining replication: peer="{Voter kv-1 kv-1.kv.raftlab.svc.cluster.local:7000}"

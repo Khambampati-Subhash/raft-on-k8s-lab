@@ -3,6 +3,9 @@
 //	raftctl [discovery flags] leader       print the leader's ID
 //	raftctl [discovery flags] status       print every node's /status as JSON
 //	raftctl [discovery flags] leave <id>   remove a member (via the leader)
+//	raftctl [discovery flags] fault <id> [--delay 200ms] [--fail-rate 0.5]
+//	                                       set a log-append fault on one node
+//	                                       (needs kvnode --debug-endpoints; no flags = off)
 package main
 
 import (
@@ -24,7 +27,7 @@ func main() {
 	port := flag.Int("port", 8080, "HTTP port with --service")
 	timeout := flag.Duration("timeout", 10*time.Second, "overall timeout")
 	flag.Usage = func() {
-		fmt.Fprintln(os.Stderr, "usage: raftctl [--nodes URLS | --service NAME --port N] leader | status | leave <id>")
+		fmt.Fprintln(os.Stderr, "usage: raftctl [--nodes URLS | --service NAME --port N] leader | status | leave <id> | fault <id> [--delay D] [--fail-rate R]")
 		flag.PrintDefaults()
 	}
 	flag.Parse()
@@ -66,6 +69,17 @@ func main() {
 			log.Fatal(err)
 		}
 		fmt.Printf("%s removed\n", args[1])
+	case len(args) >= 2 && args[0] == "fault":
+		// The flag package stops at the first non-flag, so fault's own flags
+		// come after the ID and get their own FlagSet.
+		fs := flag.NewFlagSet("fault", flag.ExitOnError)
+		delay := fs.Duration("delay", 0, "extra time per log append")
+		failRate := fs.Float64("fail-rate", 0, "fraction of log appends that fail with EIO (0..1)")
+		fs.Parse(args[2:])
+		if err := c.Fault(ctx, args[1], *delay, *failRate); err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("%s: delay=%v fail-rate=%v\n", args[1], *delay, *failRate)
 	default:
 		flag.Usage()
 		os.Exit(2)
