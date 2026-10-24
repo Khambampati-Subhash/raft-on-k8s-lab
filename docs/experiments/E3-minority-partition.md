@@ -58,6 +58,7 @@ raftwatch event stream:
 | Isolated follower's election timer fires, but its term doesn't increase | **Yes.** `kv-1` became a candidate 2.7 s after the cut. There is no `term` event for it anywhere in the run. |
 | Its stale-read lag grows to ~400 | **Yes: 397.** |
 | On heal it rejoins without disturbing the leader | **Yes.** `candidate -> follower` at 40.4 s, no `leader-change`, no term change. |
+| …and gets the missed entries | **Yes.** After the run all commit indexes match: `kv-0=331158 kv-1=331158 kv-2=331158`. |
 
 ## Explanation
 

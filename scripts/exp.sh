@@ -80,6 +80,21 @@ if len(t) == 2:
     if wall > 135:
         print(f"write phase took {wall:.0f}s wall for 120s: host/VM was suspended, timings invalid")
 ')
+  # A follower can look healthy (heartbeats, no elections) while not
+  # replicating at all (E8b). Require every commit index to reach the leader's.
+  CONV=""
+  for _ in $(seq 1 15); do
+    CONV=$(rctl status 2>/dev/null | python3 -c '
+import json, sys
+rows = [r["status"] for r in json.load(sys.stdin) if r.get("status")]
+lead = [s["commitIndex"] for s in rows if s["role"] == "leader"]
+if not lead: print("no leader after the run"); sys.exit()
+print("; ".join("%s %d entries behind" % (s["id"], lead[0] - s["commitIndex"]) for s in rows if s["commitIndex"] < lead[0]))
+')
+    [ -z "$CONV" ] && break
+    sleep 1
+  done
+  [ -n "$CONV" ] && SUSP="${SUSP:+$SUSP; }not converged: $CONV"
   WARN=$(printf "%s" "$WARN${WARN:+${SUSP:+; }}$SUSP")
   RESULT=$([ $STATUS = 0 ] && echo PASS || echo FAIL)${WARN:+ (WARN: $WARN)}
   {

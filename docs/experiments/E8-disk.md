@@ -136,13 +136,18 @@ github.com/hashicorp/raft.(*netPipeline).decodeResponses(0x4001313bc0)
 
 and **no** `pipelineDecode` (the consumer) for that pipeline. Reading the v1.8.0 source:
 
+Our transport uses the default `MaxRPCsInFlight` of 2. hashicorp/raft sizes both pipeline
+channels at `maxInFlight − 2`, so here they are **unbuffered**: every hand-off needs the
+other side to be waiting right then.
+
 1. The faulty follower rejected an AppendEntries (its append failed with EIO).
 2. The consumer, `pipelineDecode`, treats a rejection as "abort pipeline" and **returns**. From
-   then on nobody reads the pipeline's `doneCh`.
-3. The reply reader fills `doneCh` (a bounded buffer) and then blocks on it forever, so it
-   stops draining `inprogressCh`.
-4. Under full write load the sender already had a full window of requests in flight, so
-   `inprogressCh` fills up too, and the sender blocks forever at line 882.
+   then on nobody receives from the pipeline's `doneCh`.
+3. The next reply that arrives leaves the reply reader stuck handing it to `doneCh` (line 849).
+   It stops receiving from `inprogressCh`.
+4. The next request the sender hands to `inprogressCh` (line 882) blocks forever. With
+   unbuffered channels, **one more request in flight** is enough. Under any steady write
+   load there always is one.
 5. The code that would close the pipeline (and unblock both, via `shutdownCh`) runs only
    after the sender returns. It never does.
 
@@ -153,9 +158,18 @@ looked wrong except one number: `kv-1`'s commit index.
 **What un-stuck it:** a leader change. Killing the leader (our `SIGQUIT`) made `kv-2`
 leader with fresh pipelines, and `kv-1` caught up to 360,053 at once.
 
-We haven't checked whether this is a known hashicorp/raft issue. A likely mitigation, not
-tested here, is disabling pipelining (`MaxRPCsInFlight` < 2 in the transport config), at the
-cost of throughput.
+**It's a known, open upstream issue:**
+[hashicorp/raft#612](https://github.com/hashicorp/raft/issues/612), "Leader stopped sending
+appendEntries to the follower, but heartbeat was working", opened 2024-08 after a follower's
+log store returned an error. A 2026-08 comment there reports the same thing after a disk stall
+in Grafana Pyroscope, points at pipeline replication, and says disabling pipelining made it
+go away. v1.8.0 is the newest release as of 2026-10-24, so there's no fixed version to
+upgrade to. What this experiment adds is a **deterministic reproduction** (2 of 2 runs, a
+50 % EIO rate on one follower's appends) and a goroutine dump pinning the two blocked lines.
+
+The mitigation upstream points to, and which we haven't tested here, is turning pipelining
+off: `MaxRPCsInFlight: 1` via `raft.NewNetworkTransportWithConfig`. That costs replication
+throughput, since the leader waits for each AppendEntries reply before sending the next.
 
 **Is the injector to blame?** It fails an append by returning EIO without writing anything.
 That's the same thing bolt does when a write transaction fails: it rolls back. The deadlock

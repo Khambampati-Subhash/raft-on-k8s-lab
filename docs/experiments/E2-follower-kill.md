@@ -42,7 +42,9 @@ From [`results/E2-20261024t084805.log`](results/E2-20261024t084805.log):
   Lost: 0
 ```
 
-That's the entire raftwatch event stream: no `leader-change`, no `term` event.
+That's the entire raftwatch event stream: no `leader-change`, no `term` event. After the
+run, all three commit indexes match (`raftctl status`): `kv-0=313330 kv-1=313330 kv-2=313330`.
+(Checked after [E8](E8-disk.md) showed a follower can look healthy while not replicating.)
 
 | Prediction | Held? |
 |---|---|

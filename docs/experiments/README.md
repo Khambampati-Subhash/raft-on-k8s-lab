@@ -32,6 +32,9 @@ role at that moment), every raftwatch event, and loadgen's report.
 - **Lost**: acknowledged (`ok`) but missing or wrong on read-back. **Must be 0.**
 - **unavailability windows**: gaps longer than 500 ms with no successful write.
 - **stale-read max lag**: how many probe-counter values behind a node's local copy got.
+- **Convergence**: after every run, `exp.sh` checks that every node's commit index reaches the
+  leader's (within 15 s), and warns if one doesn't. A stuck follower looks healthy otherwise
+  ([E8](E8-disk.md)). E1–E6 and E8a all converged exactly.
 - **Election time**: measured from raftwatch's own timestamps, from the old leader going
   `unreachable` to the `leader-change`. raftwatch polls every 250 ms, so treat it as ±250 ms.
 
@@ -55,4 +58,4 @@ was wrong, it stays, marked as such.
 | [E5](E5-latency.md) | 100 ms / 800 ms latency between nodes | 100 ms yes. **800 ms no**: RTT above the 500 ms leader lease means no leader survives; 40 s of zero writes, Lost 0 |
 | [E6](E6-packet-loss.md) | 10 % / 40 % packet loss between nodes | Yes. 10 %: no elections. 40 %: 10 leader changes, 14 windows, Lost 0 |
 | [E7](E7-clock-skew.md) | leader clock −5 min | **Not run.** TimeChaos segfaults Go's runtime on arm64. Code reading of hashicorp/raft says the timers are monotonic |
-| [E8](E8-disk.md) | slow / failing log appends (in-process injector) | Partly. Lost 0 and no elections, but **E8b found a replication deadlock in hashicorp/raft v1.8.0**: the faulty follower stops replicating for good while looking healthy (2/2 runs) |
+| [E8](E8-disk.md) | slow / failing log appends (in-process injector) | Partly. Lost 0 and no elections, but **E8b reproduced a pipeline-replication deadlock in hashicorp/raft v1.8.0** ([upstream #612](https://github.com/hashicorp/raft/issues/612)): the faulty follower stops replicating for good while looking healthy (2/2 runs) |
