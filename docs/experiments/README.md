@@ -61,3 +61,4 @@ was wrong, it stays, marked as such.
 | [E8](E8-disk.md) | slow / failing log appends (in-process injector) | Partly. Lost 0 and no elections, but **E8b reproduced a pipeline-replication deadlock in hashicorp/raft v1.8.0** ([upstream #612](https://github.com/hashicorp/raft/issues/612)): the faulty follower stops replicating for good while looking healthy (2/2 runs) |
 | [E9](E9-wiped-pvc.md) | a node's disk wiped | Follower: yes, Lost 0. `kv-0` with peers dark: **split brain, 170,972 lost** → fixed bootstrap rule. A wiped voter can still vote in a stale leader: **75 lost** (not fixed) |
 | [E10](E10-rolling-update.md) | rolling restart under load | Mostly. One election, Lost 0, but a 5.1 s window (2.9 s of it unexplained) and a restarted follower deaf for 10 s |
+| [E11](E11-membership.md) | scale 3→5, 5→3 naive, 5→3 leave-first | Yes. Naive scale-down leaves 5 voters with 2 dead (zero failure tolerance); leave-first leaves 3 clean. Lost 0 |
