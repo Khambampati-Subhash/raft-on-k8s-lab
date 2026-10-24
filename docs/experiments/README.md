@@ -52,3 +52,5 @@ was wrong, it stays, marked as such.
 | [E2](E2-follower-kill.md) | kill a follower pod | Yes. No window, no election, Lost 0 |
 | [E3](E3-minority-partition.md) | partition one follower away | Yes. No window, no term inflation on heal (pre-vote), isolated follower 397 behind on stale reads |
 | [E4](E4-isolate-leader.md) | partition the leader away from both followers | Yes. Old leader stepped down in 0.68 s, 2.16 s window, exactly 4 indeterminate (all absent), Lost 0 |
+| [E5](E5-latency.md) | 100 ms / 800 ms latency between nodes | 100 ms yes. **800 ms no**: RTT above the 500 ms leader lease means no leader survives; 40 s of zero writes, Lost 0 |
+| [E6](E6-packet-loss.md) | 10 % / 40 % packet loss between nodes | Yes. 10 %: no elections. 40 %: 10 leader changes, 14 windows, Lost 0 |

@@ -1,0 +1,21 @@
+# E6a-loss-10: loss on all kv<->kv traffic (both directions). loadgen/raftwatch traffic
+# to the pods is not affected.
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: e6a-loss-10
+  namespace: raftlab
+spec:
+  action: loss
+  mode: all
+  direction: both
+  duration: 40s
+  loss: {loss: "10"}
+  selector:
+    namespaces: [raftlab]
+    labelSelectors: {app: kv}
+  target:
+    mode: all
+    selector:
+      namespaces: [raftlab]
+      labelSelectors: {app: kv}

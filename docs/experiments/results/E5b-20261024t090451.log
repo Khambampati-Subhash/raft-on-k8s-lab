@@ -1,0 +1,345 @@
+# experiment E5b  run e5b-20261024t090451
+
+## kv pods before (name uid restarts last-termination)
+kv-0 a43933e8-7526-45c0-83bb-bce641523bce 0 
+kv-1 cbf789b0-6016-460c-94be-b98091d9437b 0 
+kv-2 640212e0-799e-4e35-8d5a-db84232e8f2e 0 
+
+## raftctl status before
+[
+  {
+    "url": "http://10.244.2.25:8080",
+    "status": {
+      "id": "kv-0",
+      "role": "leader",
+      "term": 2,
+      "leaderId": "kv-0",
+      "leaderAddr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 4,
+      "appliedIndex": 4,
+      "lastLogIndex": 4,
+      "lastContact": "0",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  },
+  {
+    "url": "http://10.244.1.21:8080",
+    "status": {
+      "id": "kv-1",
+      "role": "follower",
+      "term": 2,
+      "leaderId": "kv-0",
+      "leaderAddr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 4,
+      "appliedIndex": 4,
+      "lastLogIndex": 4,
+      "lastContact": "17.875959ms",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  },
+  {
+    "url": "http://10.244.3.25:8080",
+    "status": {
+      "id": "kv-2",
+      "role": "follower",
+      "term": 2,
+      "leaderId": "kv-0",
+      "leaderAddr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 4,
+      "appliedIndex": 4,
+      "lastLogIndex": 4,
+      "lastContact": "6.622708ms",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  }
+]
+
+## injection
+leader before injection: kv-0
+  kv-0 Running leader l
+  kv-1 Running follower f1
+  kv-2 Running follower f2
+injected at 2026-10-24T09:05:39.295+00:00
+networkchaos.chaos-mesh.org/e5b-latency-800ms created
+chaos record: e5b-latency-800ms raftlab/kv-2 phase=Not Injected injected=1
+chaos record: e5b-latency-800ms raftlab/kv-0 phase=Not Injected injected=1
+chaos record: e5b-latency-800ms raftlab/kv-1 phase=Not Injected injected=1
+chaos record: e5b-latency-800ms raftlab/kv-0 phase=Not Injected injected=1
+chaos record: e5b-latency-800ms raftlab/kv-1 phase=Not Injected injected=1
+chaos record: e5b-latency-800ms raftlab/kv-2 phase=Not Injected injected=1
+
+## raftwatch events
+2026-10-24T09:05:40.228628093Z role          kv-0   leader -> follower
+2026-10-24T09:05:41.980335344Z role          kv-0   follower -> candidate
+2026-10-24T09:05:42.728109802Z role          kv-1   follower -> candidate
+2026-10-24T09:05:43.477705011Z role          kv-2   follower -> candidate
+2026-10-24T09:05:43.730439386Z term          kv-0   2 -> 3
+2026-10-24T09:05:44.48174597Z term          kv-1   2 -> 3
+2026-10-24T09:05:44.48174597Z role          kv-1   candidate -> follower
+2026-10-24T09:05:45.227118679Z leader-change kv-0   - -> kv-0
+2026-10-24T09:05:45.227118679Z role          kv-0   candidate -> leader
+2026-10-24T09:05:45.728399887Z role          kv-0   leader -> follower
+2026-10-24T09:05:45.977234804Z term          kv-2   2 -> 3
+2026-10-24T09:05:45.977234804Z role          kv-2   candidate -> follower
+2026-10-24T09:05:46.226685637Z role          kv-1   follower -> candidate
+2026-10-24T09:05:47.229813221Z role          kv-0   follower -> candidate
+2026-10-24T09:05:47.727393055Z role          kv-1   candidate -> follower
+2026-10-24T09:05:48.728990472Z term          kv-0   3 -> 4
+2026-10-24T09:05:49.229335139Z role          kv-1   follower -> candidate
+2026-10-24T09:05:49.476546541Z term          kv-1   3 -> 4
+2026-10-24T09:05:49.476546541Z role          kv-1   candidate -> follower
+2026-10-24T09:05:49.726531583Z term          kv-2   3 -> 4
+2026-10-24T09:05:50.976669875Z role          kv-1   follower -> candidate
+2026-10-24T09:05:50.976669875Z role          kv-2   follower -> candidate
+2026-10-24T09:05:51.477792417Z term          kv-0   4 -> 5
+2026-10-24T09:05:52.227317709Z term          kv-1   4 -> 5
+2026-10-24T09:05:52.227317709Z role          kv-1   candidate -> follower
+2026-10-24T09:05:52.227317709Z term          kv-2   4 -> 5
+2026-10-24T09:05:52.227317709Z role          kv-2   candidate -> follower
+2026-10-24T09:05:52.978109876Z leader-change kv-0   - -> kv-0
+2026-10-24T09:05:52.978109876Z role          kv-0   candidate -> leader
+2026-10-24T09:05:53.478585043Z role          kv-0   leader -> follower
+2026-10-24T09:05:53.728503252Z role          kv-1   follower -> candidate
+2026-10-24T09:05:53.728503252Z role          kv-2   follower -> candidate
+2026-10-24T09:05:53.977041918Z role          kv-1   candidate -> follower
+2026-10-24T09:05:53.977041918Z role          kv-2   candidate -> follower
+2026-10-24T09:05:54.726890794Z role          kv-0   follower -> candidate
+2026-10-24T09:05:55.478401919Z role          kv-1   follower -> candidate
+2026-10-24T09:05:55.732245836Z role          kv-2   follower -> candidate
+2026-10-24T09:05:56.226849628Z term          kv-0   5 -> 6
+2026-10-24T09:05:56.978098003Z term          kv-1   5 -> 6
+2026-10-24T09:05:57.226812337Z term          kv-2   5 -> 6
+2026-10-24T09:05:57.226812337Z role          kv-2   candidate -> follower
+2026-10-24T09:05:58.22787392Z role          kv-2   follower -> candidate
+2026-10-24T09:05:59.73060888Z term          kv-0   6 -> 7
+2026-10-24T09:06:00.477114922Z term          kv-1   6 -> 7
+2026-10-24T09:06:00.477114922Z role          kv-1   candidate -> follower
+2026-10-24T09:06:00.477114922Z term          kv-2   6 -> 7
+2026-10-24T09:06:00.477114922Z role          kv-2   candidate -> follower
+2026-10-24T09:06:02.228212422Z role          kv-1   follower -> candidate
+2026-10-24T09:06:02.228212422Z role          kv-2   follower -> candidate
+2026-10-24T09:06:03.978681423Z term          kv-0   7 -> 8
+2026-10-24T09:06:04.729354799Z term          kv-1   7 -> 8
+2026-10-24T09:06:04.729354799Z term          kv-2   7 -> 8
+2026-10-24T09:06:04.729354799Z role          kv-2   candidate -> follower
+2026-10-24T09:06:05.480284799Z leader-change kv-0   - -> kv-0
+2026-10-24T09:06:05.480284799Z role          kv-0   candidate -> leader
+2026-10-24T09:06:05.979296174Z role          kv-0   leader -> follower
+2026-10-24T09:06:06.228387341Z role          kv-1   candidate -> follower
+2026-10-24T09:06:07.229659591Z role          kv-0   follower -> candidate
+2026-10-24T09:06:07.728112467Z role          kv-1   follower -> candidate
+2026-10-24T09:06:07.978908342Z role          kv-2   follower -> candidate
+2026-10-24T09:06:10.730617176Z term          kv-1   8 -> 9
+2026-10-24T09:06:11.477992135Z term          kv-0   8 -> 9
+2026-10-24T09:06:11.477992135Z term          kv-2   8 -> 9
+2026-10-24T09:06:11.477992135Z role          kv-2   candidate -> follower
+2026-10-24T09:06:12.228185927Z leader-change kv-1   - -> kv-1
+2026-10-24T09:06:12.228185927Z role          kv-1   candidate -> leader
+2026-10-24T09:06:12.730168052Z role          kv-1   leader -> follower
+2026-10-24T09:06:12.730168052Z role          kv-2   follower -> candidate
+2026-10-24T09:06:12.979698427Z role          kv-0   candidate -> follower
+2026-10-24T09:06:13.228250136Z role          kv-2   candidate -> follower
+2026-10-24T09:06:13.97826022Z role          kv-1   follower -> candidate
+2026-10-24T09:06:14.97868797Z role          kv-0   follower -> candidate
+2026-10-24T09:06:14.97868797Z role          kv-2   follower -> candidate
+2026-10-24T09:06:16.978971804Z term          kv-1   9 -> 10
+2026-10-24T09:06:17.977596305Z term          kv-0   9 -> 10
+2026-10-24T09:06:17.977596305Z role          kv-0   candidate -> follower
+2026-10-24T09:06:17.977596305Z term          kv-2   9 -> 10
+2026-10-24T09:06:17.977596305Z role          kv-2   candidate -> follower
+2026-10-24T09:06:19.479161375Z role          kv-2   follower -> candidate
+2026-10-24T09:06:19.978009375Z leader-change kv-0   - -> kv-0
+2026-10-24T09:06:19.978009375Z term          kv-0   10 -> 11
+2026-10-24T09:06:19.978009375Z role          kv-0   follower -> leader
+2026-10-24T09:06:19.978009375Z term          kv-1   10 -> 11
+2026-10-24T09:06:19.978009375Z role          kv-1   candidate -> follower
+2026-10-24T09:06:19.978009375Z term          kv-2   10 -> 11
+2026-10-24T09:06:19.978009375Z role          kv-2   candidate -> follower
+
+## loadgen
+loadgen: run e5b-20261024t090451, 4 workers for 2m0s
+loadgen: verifying 218365 writes
+run e5b-20261024t090451
+  writes: 218365 total, 212413 ok, 5932 failed, 20 indeterminate (16 present, 4 absent)
+  latency (ok): p50 1.48ms, p99 2.655ms
+  unavailability windows: 1
+    09:05:39.492 .. 09:06:19.764 (40.272s)
+  stale-read max lag: kv-0=0 kv-1=0 kv-2=1
+  Lost: 0
+{
+  "failed": 5932,
+  "gaps": [
+    {
+      "from": "2026-10-24T09:05:39.492019426Z",
+      "to": "2026-10-24T09:06:19.76441475Z"
+    }
+  ],
+  "indeterminate": 20,
+  "indeterminate_absent": 4,
+  "indeterminate_present": 16,
+  "lost": 0,
+  "lost_keys": null,
+  "ok": 212413,
+  "p50_ms": 1.479666,
+  "p99_ms": 2.654916,
+  "run_id": "e5b-20261024t090451",
+  "stale_lag": {
+    "kv-0": 0,
+    "kv-1": 0,
+    "kv-2": 1
+  },
+  "total": 218365,
+  "verify_errors": 0
+}
+
+## kv pods after
+kv-0 a43933e8-7526-45c0-83bb-bce641523bce 0 
+kv-1 cbf789b0-6016-460c-94be-b98091d9437b 0 
+kv-2 640212e0-799e-4e35-8d5a-db84232e8f2e 0 
+
+## raftctl status after
+[
+  {
+    "url": "http://10.244.2.25:8080",
+    "status": {
+      "id": "kv-0",
+      "role": "leader",
+      "term": 11,
+      "leaderId": "kv-0",
+      "leaderAddr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 213239,
+      "appliedIndex": 213239,
+      "lastLogIndex": 213239,
+      "lastContact": "0",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  },
+  {
+    "url": "http://10.244.1.21:8080",
+    "status": {
+      "id": "kv-1",
+      "role": "follower",
+      "term": 11,
+      "leaderId": "kv-0",
+      "leaderAddr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 213239,
+      "appliedIndex": 213239,
+      "lastLogIndex": 213239,
+      "lastContact": "27.860041ms",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  },
+  {
+    "url": "http://10.244.3.25:8080",
+    "status": {
+      "id": "kv-2",
+      "role": "follower",
+      "term": 11,
+      "leaderId": "kv-0",
+      "leaderAddr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 213239,
+      "appliedIndex": 213239,
+      "lastLogIndex": 213239,
+      "lastContact": "19.145208ms",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  }
+]
+
+## result: PASS (job status 0)

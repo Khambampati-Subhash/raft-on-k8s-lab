@@ -1,0 +1,21 @@
+# E5a-latency-100ms: delay on all kv<->kv traffic (both directions). loadgen/raftwatch traffic
+# to the pods is not affected.
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: e5a-latency-100ms
+  namespace: raftlab
+spec:
+  action: delay
+  mode: all
+  direction: both
+  duration: 40s
+  delay: {latency: 100ms, jitter: 50ms}
+  selector:
+    namespaces: [raftlab]
+    labelSelectors: {app: kv}
+  target:
+    mode: all
+    selector:
+      namespaces: [raftlab]
+      labelSelectors: {app: kv}

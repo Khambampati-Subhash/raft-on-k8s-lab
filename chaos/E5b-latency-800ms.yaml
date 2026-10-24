@@ -1,0 +1,21 @@
+# E5b-latency-800ms: delay on all kv<->kv traffic (both directions). loadgen/raftwatch traffic
+# to the pods is not affected.
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: e5b-latency-800ms
+  namespace: raftlab
+spec:
+  action: delay
+  mode: all
+  direction: both
+  duration: 40s
+  delay: {latency: 800ms, jitter: 100ms}
+  selector:
+    namespaces: [raftlab]
+    labelSelectors: {app: kv}
+  target:
+    mode: all
+    selector:
+      namespaces: [raftlab]
+      labelSelectors: {app: kv}
