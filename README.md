@@ -5,8 +5,9 @@
 A hands-on lab for seeing how Raft consensus behaves when real-world failures hit a
 Kubernetes cluster. It imports [`hashicorp/raft`](https://github.com/hashicorp/raft) (v1.8.0),
 wraps it in a tiny key-value service, runs it on `kind`, and breaks it on purpose with
-[Chaos Mesh](https://chaos-mesh.org/). Every claim in the docs is backed by output pasted from
-a real run, and every hypothesis that turned out wrong is kept and marked as wrong.
+[Chaos Mesh](https://chaos-mesh.org/). Every "it broke" claim in the docs is backed by output
+pasted from a real run; explanations that rest on reading code or on timing alone say so.
+Every hypothesis that turned out wrong is kept and marked as wrong.
 
 ## What's here
 
