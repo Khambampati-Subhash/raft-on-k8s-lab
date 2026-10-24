@@ -49,6 +49,11 @@ was wrong, it stays, marked as such.
 
 ## Index
 
+Lost acknowledged writes across all runs: **0**, except E9 (a wiped disk), which is the
+point of E9. Per-run logs are in [`results/`](results/). Logs marked `-suspended` or
+`-oom` are kept as evidence but not used for numbers; `E7-probe`, `E8-probe` and
+`E8b-stall` are the investigations behind those docs.
+
 | ID | Fault | Hypothesis held? |
 |---|---|---|
 | [E1](E1-leader-kill.md) | kill the leader pod | Mostly. Lost 0, 1.25 s window; but the killed leader won the next election itself, and nothing was indeterminate |

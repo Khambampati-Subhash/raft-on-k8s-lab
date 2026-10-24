@@ -30,3 +30,16 @@ Plain-English definitions, added as each term first shows up in the journey.
 | **emptyDir / PVC** | Pod storage. An `emptyDir` is deleted with the pod. A PersistentVolumeClaim outlives the pod and is reattached to its replacement. |
 | **Partition** | The network splits the cluster into groups that can't reach each other, while every node keeps running. The group with a majority carries on; the minority can't elect a leader or commit. |
 | **Leader lease** | A leader that hasn't heard from a majority for `LeaderLeaseTimeout` (500 ms default in hashicorp/raft) steps down on its own, so a cut-off leader stops accepting writes quickly. |
+| **Acknowledged write** | A write the client was told succeeded (`2xx`). The one promise this lab checks: it must still be there afterwards. |
+| **Indeterminate / outcome-unknown** | A write whose result the client can't know: a timeout, a connection cut after sending, or `504 outcome-unknown` from a leader that lost leadership mid-write. It may or may not have been applied (E5b: 16 of 20 had been). Never "failed", never "ok". |
+| **Lost write** | An acknowledged write that's missing or wrong when read back through the leader. loadgen's headline number; must be 0. Only E9's wiped disks produced any. |
+| **Unavailability window** | A stretch of more than 500 ms with no acknowledged write (loadgen's measure of an outage). |
+| **Snapshot / log compaction** | A copy of the whole state machine at some log index, after which the log entries before it are deleted. hashicorp/raft checks whether to snapshot only every 120 s, so a busy log grows large in between (E1's OOM). |
+| **Pipeline replication** | The leader sends AppendEntries to a follower without waiting for each reply. Faster, and in hashicorp/raft v1.8.0 the source of a deadlock when a follower rejects an append (E8b). |
+| **Non-voter** | A member that receives the log but doesn't count toward the majority or vote. The safe way to bring back a node that lost its disk (E9); not implemented here. |
+| **Liveness / readiness probe** | Kubernetes health checks. Readiness failing: send no traffic. Liveness failing: kill and restart the container. Liveness must never depend on "is there a leader" (stage 4). |
+| **PodDisruptionBudget (PDB)** | Limits how many pods voluntary operations (drains, rollouts) may take down at once. Here `maxUnavailable: 1`. |
+| **Headless Service** | A Service without a virtual IP that gives every pod its own DNS name (`kv-0.kv.raftlab.svc.cluster.local`), which is what the Raft transport uses as an address. |
+| **Monotonic clock** | A clock that only moves forward and isn't affected by setting the wall-clock time. Go uses it for durations, and so do all of Raft's timers (E7). |
+| **vDSO** | A small piece of kernel code mapped into every process so it can read the clock without a system call. Chaos Mesh's TimeChaos patches it, which crashes Go on arm64 (E7). |
+| **Chaos Mesh** | The fault-injection tool used for the experiments (pod kills, network partitions, latency, loss), installed into the kind cluster with Helm. |
