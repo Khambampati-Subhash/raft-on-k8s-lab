@@ -33,6 +33,7 @@ STATUS=1
 pods() { kubectl -n $NS get pods -l app=kv -o jsonpath='{range .items[*]}{.metadata.name} {.metadata.uid} {.status.containerStatuses[0].restartCount} {.status.containerStatuses[0].lastState.terminated.reason}{"\n"}{end}'; }
 
 finish() {
+  if [ -z "${STARTED:-}" ]; then rm -rf "$TMP"; echo "$ID: aborted before loadgen started, no log written"; return; fi
   [ -n "$YAMLS" ] && kubectl delete -f $YAMLS --ignore-not-found >/dev/null 2>&1
   [ -x "chaos/$ID-heal.sh" ] && "chaos/$ID-heal.sh" >/dev/null 2>&1
   # Bounded wait for the raftwatch capture only (a bare `wait` once stalled
@@ -108,6 +109,7 @@ pods > "$TMP/pods-before"
 rctl status > "$TMP/before"
 scripts/label-leader.sh >/dev/null
 scripts/run-loadgen.sh "$RUN" 120s >/dev/null
+STARTED=1
 # kubectl itself (not a wrapper function) so `wait` tracks the real process.
 kubectl -n $NS exec deploy/raftwatch -- /raftwatch --service $SVC --port 8080 --events-only --for 150s > "$TMP/events" 2>&1 &
 WATCH_PID=$!

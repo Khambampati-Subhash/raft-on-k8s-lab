@@ -48,5 +48,5 @@ was wrong, it stays, marked as such.
 
 | ID | Fault | Hypothesis held? |
 |---|---|---|
-| [E1](E1-leader-kill.md) | kill the leader pod | _pending_ |
-| [E2](E2-follower-kill.md) | kill a follower pod | _pending_ |
+| [E1](E1-leader-kill.md) | kill the leader pod | Mostly. Lost 0, 1.25 s window; but the killed leader won the next election itself, and nothing was indeterminate |
+| [E2](E2-follower-kill.md) | kill a follower pod | Yes. No window, no election, Lost 0 |
