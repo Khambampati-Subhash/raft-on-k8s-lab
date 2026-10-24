@@ -1,0 +1,20 @@
+# E4: cut the leader off from both followers (both directions). Clients can
+# still reach the old leader, so they keep sending it writes for a while.
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: e4-isolate-leader
+  namespace: raftlab
+spec:
+  action: partition
+  mode: all
+  direction: both
+  duration: 40s
+  selector:
+    namespaces: [raftlab]
+    labelSelectors: {app: kv, raft-role: leader}
+  target:
+    mode: all
+    selector:
+      namespaces: [raftlab]
+      labelSelectors: {app: kv, raft-role: follower}

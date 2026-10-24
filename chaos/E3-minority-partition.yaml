@@ -1,0 +1,22 @@
+# E3: cut follower f1 off from the other kv pods (both directions). Only
+# kv<->kv traffic is cut: loadgen and raftwatch still reach every pod.
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: e3-minority-partition
+  namespace: raftlab
+spec:
+  action: partition
+  mode: all
+  direction: both
+  duration: 40s
+  selector:
+    namespaces: [raftlab]
+    labelSelectors: {app: kv, raft-rank: f1}
+  target:
+    mode: all
+    selector:
+      namespaces: [raftlab]
+      labelSelectors: {app: kv}
+      expressionSelectors:
+        - {key: raft-rank, operator: NotIn, values: [f1]}

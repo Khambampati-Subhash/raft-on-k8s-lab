@@ -50,3 +50,5 @@ was wrong, it stays, marked as such.
 |---|---|---|
 | [E1](E1-leader-kill.md) | kill the leader pod | Mostly. Lost 0, 1.25 s window; but the killed leader won the next election itself, and nothing was indeterminate |
 | [E2](E2-follower-kill.md) | kill a follower pod | Yes. No window, no election, Lost 0 |
+| [E3](E3-minority-partition.md) | partition one follower away | Yes. No window, no term inflation on heal (pre-vote), isolated follower 397 behind on stale reads |
+| [E4](E4-isolate-leader.md) | partition the leader away from both followers | Yes. Old leader stepped down in 0.68 s, 2.16 s window, exactly 4 indeterminate (all absent), Lost 0 |

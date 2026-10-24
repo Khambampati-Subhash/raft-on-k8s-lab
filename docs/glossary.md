@@ -20,7 +20,7 @@ Plain-English definitions, added as each term first shows up in the journey.
 | **Heartbeat** | Small regular message from the leader that says "I'm still here." |
 | **Election timeout** | How long a follower waits without a heartbeat before starting an election. Randomized so nodes don't all start at once. |
 | **State machine (FSM)** | The thing the log is applied to. Here, a Go map. |
-| **Stale read** | Reading a node's local copy without checking with the leader. Fast, but may miss recent writes. |
+| **Stale read** | Reading a node's local copy without checking with the leader. Fast, but may miss recent writes. A partitioned node serves arbitrarily old data this way (E3: 40 s), and a freshly restarted one can briefly serve an empty store (E1). |
 | **Linearizable read** | A read that reflects every write acknowledged before it started. Here: the leader confirms it's still leader with a majority before answering. |
 | **Bootstrap** | Creating a brand-new cluster: the very first node declares itself the only member. Must happen exactly once. |
 | **Voter / membership** | The list of servers Raft counts when it computes a majority. It changes only through explicit "add voter" / "remove server" entries in the log, never by a node just disappearing. |
@@ -28,3 +28,5 @@ Plain-English definitions, added as each term first shows up in the journey.
 | **Pre-vote** | A dry-run election: a candidate first asks "would you vote for me?" without bumping the term, so a node that can't win doesn't disrupt the cluster. hashicorp/raft does this, which is why a stuck candidate's term doesn't climb. |
 | **Deployment / StatefulSet** | Kubernetes controllers that keep N pods running. A Deployment's pods are interchangeable: random names, new IP, fresh disk on every replacement. A StatefulSet's pods have stable names (`kv-0`), stable DNS and their own persistent disk. |
 | **emptyDir / PVC** | Pod storage. An `emptyDir` is deleted with the pod. A PersistentVolumeClaim outlives the pod and is reattached to its replacement. |
+| **Partition** | The network splits the cluster into groups that can't reach each other, while every node keeps running. The group with a majority carries on; the minority can't elect a leader or commit. |
+| **Leader lease** | A leader that hasn't heard from a majority for `LeaderLeaseTimeout` (500 ms default in hashicorp/raft) steps down on its own, so a cut-off leader stops accepting writes quickly. |
