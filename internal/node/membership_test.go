@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"testing"
+
+	"github.com/hashicorp/raft"
 )
 
 // spawn starts a fresh, unbootstrapped node wired to every existing node and
@@ -153,4 +155,27 @@ func TestLaggingFollowerCatchesUpViaSnapshot(t *testing.T) {
 		}
 		return true
 	})
+}
+
+func TestBootstrapSelfLater(t *testing.T) {
+	d, _ := inmemDeps("late")
+	has, err := HasExistingState(d)
+	if err != nil || has {
+		t.Fatalf("HasExistingState = %v, %v; want false", has, err)
+	}
+	n, err := New(fastConfig("late"), d) // Bootstrap: false
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer n.Shutdown()
+	if err := n.BootstrapSelf(); err != nil {
+		t.Fatal(err)
+	}
+	eventually(t, "leader of its own cluster", func() bool { return n.Status().Role == "leader" })
+	if err := n.BootstrapSelf(); !errors.Is(err, raft.ErrCantBootstrap) {
+		t.Fatalf("second BootstrapSelf err = %v, want ErrCantBootstrap", err)
+	}
+	if has, _ := HasExistingState(d); !has {
+		t.Fatal("HasExistingState false after bootstrap")
+	}
 }

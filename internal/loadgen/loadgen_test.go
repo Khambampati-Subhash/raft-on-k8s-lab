@@ -161,3 +161,14 @@ func TestProbeReportsLag(t *testing.T) {
 		t.Fatalf("lag = %v, want a>0 and b>a", lag)
 	}
 }
+
+func TestSummaryCapsLostKeys(t *testing.T) {
+	r := Report{Lost: 25}
+	for i := range 25 {
+		r.LostKeys = append(r.LostKeys, "k"+strconv.Itoa(i))
+	}
+	s := r.Summary()
+	if !strings.Contains(s, "k19\n") || strings.Contains(s, "k20\n") || !strings.Contains(s, "5 more") {
+		t.Fatalf("summary should list 20 keys then '5 more':\n%s", s)
+	}
+}

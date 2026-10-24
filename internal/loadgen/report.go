@@ -76,6 +76,9 @@ func (r *Report) AddLatency(recs []Record) {
 	r.P50, r.P99 = rank(0.50), rank(0.99)
 }
 
+// maxListedKeys caps the lost keys printed by Summary (E9c lost 170,972).
+const maxListedKeys = 20
+
 // Summary is the human-readable verdict.
 func (r Report) Summary() string {
 	var b strings.Builder
@@ -103,8 +106,11 @@ func (r Report) Summary() string {
 		fmt.Fprintf(&b, "  verify errors: %d (could not read back; not counted as lost)\n", r.VerifyErrors)
 	}
 	fmt.Fprintf(&b, "  Lost: %d\n", r.Lost)
-	for _, k := range r.LostKeys {
+	for _, k := range r.LostKeys[:min(len(r.LostKeys), maxListedKeys)] {
 		fmt.Fprintf(&b, "    %s\n", k)
+	}
+	if extra := len(r.LostKeys) - maxListedKeys; extra > 0 {
+		fmt.Fprintf(&b, "    ... %d more (all of them are in the --report file)\n", extra)
 	}
 	return b.String()
 }

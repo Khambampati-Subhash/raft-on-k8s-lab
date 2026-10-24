@@ -64,10 +64,17 @@ func main() {
 	rep.AddLatency(recs)
 
 	fmt.Print(rep.Summary())
-	out, _ := json.MarshalIndent(rep.JSON(), "", "  ")
+	full, _ := json.MarshalIndent(rep.JSON(), "", "  ")
+	// stdout gets the first keys only; the --report file gets all of them.
+	short := rep.JSON()
+	if n := len(rep.LostKeys); n > 100 {
+		short["lost_keys"] = rep.LostKeys[:100]
+		short["lost_keys_omitted"] = n - 100
+	}
+	out, _ := json.MarshalIndent(short, "", "  ")
 	fmt.Println(string(out))
 	if *reportPath != "" {
-		if err := os.WriteFile(*reportPath, append(out, '\n'), 0o644); err != nil {
+		if err := os.WriteFile(*reportPath, append(full, '\n'), 0o644); err != nil {
 			log.Printf("loadgen: write report: %v", err)
 		}
 	}

@@ -99,6 +99,7 @@ print("; ".join("%s %d entries behind" % (s["id"], lead[0] - s["commitIndex"]) f
   RESULT=$([ $STATUS = 0 ] && echo PASS || echo FAIL)${WARN:+ (WARN: $WARN)}
   {
     echo "# experiment $ID  run $RUN"
+    echo "# image $(kubectl -n $NS get sts kv -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null)"
     echo; echo "## kv pods before (name uid restarts last-termination)"; cat "$TMP/pods-before" 2>/dev/null
     echo; echo "## raftctl status before"; cat "$TMP/before" 2>/dev/null
     echo; echo "## injection"; cat "$TMP/inject" 2>/dev/null
@@ -139,6 +140,9 @@ sleep 20
 } > "$TMP/inject" 2>&1
 cat "$TMP/inject"
 
+# Script injections name their victim as "target: <pod>"; those pods may be
+# replaced without a warning.
+grep '^target: ' "$TMP/inject" | awk '{print $2}' >> "$TMP/killed"
 for _ in $(seq 1 120); do # write phase 120s + verify, poll every 2s, cap 240s
   s=$(kubectl -n $NS get job "loadgen-$RUN" -o jsonpath='{.status.succeeded}/{.status.failed}')
   case $s in 1/*) STATUS=0; break ;; */1) STATUS=1; break ;; esac

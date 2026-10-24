@@ -1,0 +1,370 @@
+# experiment E9c  run e9c-20261024t101933
+
+## kv pods before (name uid restarts last-termination)
+kv-0 34a0b241-cc75-4bfa-809d-bb242e1f9cf9 0 
+kv-1 b1962fc3-ea70-4152-be0a-cd8b061cca3d 0 
+kv-2 5267c8e5-ee86-4b39-8f22-8fdd0dd46e92 0 
+
+## raftctl status before
+[
+  {
+    "url": "http://10.244.2.83:8080",
+    "status": {
+      "id": "kv-0",
+      "role": "leader",
+      "term": 2,
+      "leaderId": "kv-0",
+      "leaderAddr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 4,
+      "appliedIndex": 4,
+      "lastLogIndex": 4,
+      "lastContact": "0",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  },
+  {
+    "url": "http://10.244.3.79:8080",
+    "status": {
+      "id": "kv-1",
+      "role": "follower",
+      "term": 2,
+      "leaderId": "kv-0",
+      "leaderAddr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 4,
+      "appliedIndex": 4,
+      "lastLogIndex": 4,
+      "lastContact": "358.833µs",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  },
+  {
+    "url": "http://10.244.1.57:8080",
+    "status": {
+      "id": "kv-2",
+      "role": "follower",
+      "term": 2,
+      "leaderId": "kv-0",
+      "leaderAddr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 4,
+      "appliedIndex": 4,
+      "lastLogIndex": 4,
+      "lastContact": "24.296833ms",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  }
+]
+
+## injection
+leader before injection: kv-0
+  kv-0 Running leader l
+  kv-1 Running follower f1
+  kv-2 Running follower f2
+injected at 2026-10-24T10:20:23.885+00:00
+kv-1, kv-2: 100% packet loss for 50s
+target: kv-0 (old PVC uid 1dd210e1-e4ff-4bba-b7a2-89ce7ae84d33)
+new PVC: ae0cf208-48da-41f0-98ac-5dfcc4069528 Bound
+kv-0 Ready again at 2026-10-24T10:21:16.914+00:00
+  kv-0 role=follower term=3 leader=kv-2 commit=69012 servers=['kv-0', 'kv-2', 'kv-1']
+  kv-1 role=follower term=3 leader=kv-2 commit=69010 servers=['kv-0', 'kv-2', 'kv-1']
+  kv-2 role=leader term=3 leader=kv-2 commit=69013 servers=['kv-0', 'kv-2', 'kv-1']
+
+## raftwatch events
+2026-10-24T10:20:24.558686544Z unreachable   kv-1   
+2026-10-24T10:20:24.558686544Z unreachable   kv-2   
+2026-10-24T10:20:25.061448335Z role          kv-0   leader -> follower
+2026-10-24T10:20:26.564530044Z role          kv-0   follower -> candidate
+2026-10-24T10:20:28.069981045Z unreachable   kv-0   
+2026-10-24T10:20:49.16517043Z reachable     kv-0   role=follower term=0
+2026-10-24T10:21:13.745346094Z reachable     kv-2   role=follower term=2
+2026-10-24T10:21:14.25123447Z reachable     kv-1   role=candidate term=2
+2026-10-24T10:21:15.058365678Z leader-change kv-2   - -> kv-2
+2026-10-24T10:21:15.058365678Z term          kv-0   0 -> 3
+2026-10-24T10:21:15.058365678Z term          kv-1   2 -> 3
+2026-10-24T10:21:15.058365678Z role          kv-1   candidate -> follower
+2026-10-24T10:21:15.058365678Z term          kv-2   2 -> 3
+2026-10-24T10:21:15.058365678Z role          kv-2   follower -> leader
+
+## loadgen
+loadgen: run e9c-20261024t101933, 4 workers for 2m0s
+loadgen: verifying 179602 writes
+run e9c-20261024t101933
+  writes: 179602 total, 179552 ok, 33 failed, 17 indeterminate (0 present, 17 absent)
+  latency (ok): p50 1.487ms, p99 2.688ms
+  unavailability windows: 1
+    10:20:24.055 .. 10:21:15.125 (51.072s)
+  stale-read max lag: kv-0=202 kv-1=202 kv-2=202
+  Lost: 75
+    e9c-20261024t101933/0/12902
+    e9c-20261024t101933/0/12903
+    e9c-20261024t101933/0/12904
+    e9c-20261024t101933/0/12905
+    e9c-20261024t101933/0/12906
+    e9c-20261024t101933/0/12907
+    e9c-20261024t101933/0/12908
+    e9c-20261024t101933/0/12909
+    e9c-20261024t101933/0/12910
+    e9c-20261024t101933/0/12911
+    e9c-20261024t101933/0/12912
+    e9c-20261024t101933/0/12913
+    e9c-20261024t101933/0/12914
+    e9c-20261024t101933/0/12915
+    e9c-20261024t101933/0/12916
+    e9c-20261024t101933/0/12917
+    e9c-20261024t101933/0/12918
+    e9c-20261024t101933/0/12919
+    e9c-20261024t101933/0/12920
+    e9c-20261024t101933/1/12895
+    ... 55 more (all of them are in the --report file)
+{
+  "failed": 33,
+  "gaps": [
+    {
+      "from": "2026-10-24T10:20:24.055064085Z",
+      "to": "2026-10-24T10:21:15.12583447Z"
+    }
+  ],
+  "indeterminate": 17,
+  "indeterminate_absent": 17,
+  "indeterminate_present": 0,
+  "lost": 75,
+  "lost_keys": [
+    "e9c-20261024t101933/0/12902",
+    "e9c-20261024t101933/0/12903",
+    "e9c-20261024t101933/0/12904",
+    "e9c-20261024t101933/0/12905",
+    "e9c-20261024t101933/0/12906",
+    "e9c-20261024t101933/0/12907",
+    "e9c-20261024t101933/0/12908",
+    "e9c-20261024t101933/0/12909",
+    "e9c-20261024t101933/0/12910",
+    "e9c-20261024t101933/0/12911",
+    "e9c-20261024t101933/0/12912",
+    "e9c-20261024t101933/0/12913",
+    "e9c-20261024t101933/0/12914",
+    "e9c-20261024t101933/0/12915",
+    "e9c-20261024t101933/0/12916",
+    "e9c-20261024t101933/0/12917",
+    "e9c-20261024t101933/0/12918",
+    "e9c-20261024t101933/0/12919",
+    "e9c-20261024t101933/0/12920",
+    "e9c-20261024t101933/1/12895",
+    "e9c-20261024t101933/1/12896",
+    "e9c-20261024t101933/1/12897",
+    "e9c-20261024t101933/1/12898",
+    "e9c-20261024t101933/1/12899",
+    "e9c-20261024t101933/1/12900",
+    "e9c-20261024t101933/1/12901",
+    "e9c-20261024t101933/1/12902",
+    "e9c-20261024t101933/1/12903",
+    "e9c-20261024t101933/1/12904",
+    "e9c-20261024t101933/1/12905",
+    "e9c-20261024t101933/1/12906",
+    "e9c-20261024t101933/1/12907",
+    "e9c-20261024t101933/1/12908",
+    "e9c-20261024t101933/1/12909",
+    "e9c-20261024t101933/1/12910",
+    "e9c-20261024t101933/1/12911",
+    "e9c-20261024t101933/1/12912",
+    "e9c-20261024t101933/1/12913",
+    "e9c-20261024t101933/2/12886",
+    "e9c-20261024t101933/2/12887",
+    "e9c-20261024t101933/2/12888",
+    "e9c-20261024t101933/2/12889",
+    "e9c-20261024t101933/2/12890",
+    "e9c-20261024t101933/2/12891",
+    "e9c-20261024t101933/2/12892",
+    "e9c-20261024t101933/2/12893",
+    "e9c-20261024t101933/2/12894",
+    "e9c-20261024t101933/2/12895",
+    "e9c-20261024t101933/2/12896",
+    "e9c-20261024t101933/2/12897",
+    "e9c-20261024t101933/2/12898",
+    "e9c-20261024t101933/2/12899",
+    "e9c-20261024t101933/2/12900",
+    "e9c-20261024t101933/2/12901",
+    "e9c-20261024t101933/2/12902",
+    "e9c-20261024t101933/2/12903",
+    "e9c-20261024t101933/2/12904",
+    "e9c-20261024t101933/3/12889",
+    "e9c-20261024t101933/3/12890",
+    "e9c-20261024t101933/3/12891",
+    "e9c-20261024t101933/3/12892",
+    "e9c-20261024t101933/3/12893",
+    "e9c-20261024t101933/3/12894",
+    "e9c-20261024t101933/3/12895",
+    "e9c-20261024t101933/3/12896",
+    "e9c-20261024t101933/3/12897",
+    "e9c-20261024t101933/3/12898",
+    "e9c-20261024t101933/3/12899",
+    "e9c-20261024t101933/3/12900",
+    "e9c-20261024t101933/3/12901",
+    "e9c-20261024t101933/3/12902",
+    "e9c-20261024t101933/3/12903",
+    "e9c-20261024t101933/3/12904",
+    "e9c-20261024t101933/3/12905",
+    "e9c-20261024t101933/3/12906"
+  ],
+  "ok": 179552,
+  "p50_ms": 1.487416,
+  "p99_ms": 2.687958,
+  "run_id": "e9c-20261024t101933",
+  "stale_lag": {
+    "kv-0": 202,
+    "kv-1": 202,
+    "kv-2": 202
+  },
+  "total": 179602,
+  "verify_errors": 0
+}
+
+## kv pods after
+kv-0 9323690e-f9ae-476c-926b-ca5c6a522f32 0 
+kv-1 b1962fc3-ea70-4152-be0a-cd8b061cca3d 2 Completed
+kv-2 5267c8e5-ee86-4b39-8f22-8fdd0dd46e92 2 Completed
+
+## raftctl status after
+[
+  {
+    "url": "http://10.244.2.87:8080",
+    "status": {
+      "id": "kv-0",
+      "role": "follower",
+      "term": 3,
+      "leaderId": "kv-2",
+      "leaderAddr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 180140,
+      "appliedIndex": 180140,
+      "lastLogIndex": 180140,
+      "lastContact": "18.329334ms",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  },
+  {
+    "url": "http://10.244.3.79:8080",
+    "status": {
+      "id": "kv-1",
+      "role": "follower",
+      "term": 3,
+      "leaderId": "kv-2",
+      "leaderAddr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 180140,
+      "appliedIndex": 180140,
+      "lastLogIndex": 180140,
+      "lastContact": "277.167µs",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  },
+  {
+    "url": "http://10.244.1.57:8080",
+    "status": {
+      "id": "kv-2",
+      "role": "leader",
+      "term": 3,
+      "leaderId": "kv-2",
+      "leaderAddr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+      "commitIndex": 180140,
+      "appliedIndex": 180140,
+      "lastLogIndex": 180140,
+      "lastContact": "0",
+      "servers": [
+        {
+          "id": "kv-0",
+          "addr": "kv-0.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-2",
+          "addr": "kv-2.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        },
+        {
+          "id": "kv-1",
+          "addr": "kv-1.kv.raftlab.svc.cluster.local:7000",
+          "suffrage": "Voter"
+        }
+      ]
+    }
+  }
+]
+
+## result: FAIL (WARN: kv-1 restarted 2x (Completed); kv-2 restarted 2x (Completed)) (job status 1)

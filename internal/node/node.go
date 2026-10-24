@@ -46,6 +46,7 @@ type Node struct {
 	cfg  Config
 	raft *raft.Raft
 	kv   *fsm.KV
+	addr raft.ServerAddress // advertised Raft address
 
 	// barrierTerm is the last term in which this node, as leader, has applied
 	// a barrier. See Get.
@@ -80,21 +81,38 @@ func New(cfg Config, d Deps) (*Node, error) {
 		return nil, fmt.Errorf("start raft: %w", err)
 	}
 
+	n := &Node{cfg: cfg, raft: r, kv: kv, addr: d.Transport.LocalAddr()}
 	if cfg.Bootstrap {
-		has, err := raft.HasExistingState(d.Logs, d.Stable, d.Snaps)
+		has, err := HasExistingState(d)
 		if err != nil {
 			r.Shutdown()
 			return nil, fmt.Errorf("check existing state: %w", err)
 		}
 		if !has {
-			boot := raft.Configuration{Servers: []raft.Server{{ID: rc.LocalID, Address: d.Transport.LocalAddr()}}}
-			if err := r.BootstrapCluster(boot).Error(); err != nil {
+			if err := n.BootstrapSelf(); err != nil {
 				r.Shutdown()
-				return nil, fmt.Errorf("bootstrap: %w", err)
+				return nil, err
 			}
 		}
 	}
-	return &Node{cfg: cfg, raft: r, kv: kv}, nil
+	return n, nil
+}
+
+// HasExistingState reports whether d already holds Raft state (a log, a
+// term, or a snapshot) — i.e. whether this node has ever been in a cluster.
+func HasExistingState(d Deps) (bool, error) {
+	return raft.HasExistingState(d.Logs, d.Stable, d.Snaps)
+}
+
+// BootstrapSelf creates a new cluster whose only member is this node. It
+// fails with raft.ErrCantBootstrap if the node has any Raft state by now,
+// e.g. because a leader already reached it.
+func (n *Node) BootstrapSelf() error {
+	boot := raft.Configuration{Servers: []raft.Server{{ID: raft.ServerID(n.cfg.ID), Address: n.addr}}}
+	if err := n.raft.BootstrapCluster(boot).Error(); err != nil {
+		return fmt.Errorf("bootstrap: %w", err)
+	}
+	return nil
 }
 
 func setDur(dst *time.Duration, v time.Duration) {

@@ -42,7 +42,7 @@ func main() {
 	if *id == "" || *advertise == "" {
 		log.Fatal("--id (or $POD_NAME) and --raft-advertise are required")
 	}
-	bootstrap, err := resolveBootstrap(*bootMode, *id)
+	eligible, err := resolveBootstrap(*bootMode, *id)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -57,9 +57,17 @@ func main() {
 		deps.Logs = fs
 		opts = append(opts, httpapi.WithFaultInjector(fs))
 	}
+	hasState, err := node.HasExistingState(deps)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// --bootstrap=true bootstraps at once (local stage 2). With auto, an
+	// eligible node (-0) with no state decides only after asking its peers;
+	// see awaitBootstrapDecision.
+	probePeers := *bootMode == "auto" && eligible && !hasState
 	n, err := node.New(node.Config{
 		ID:                 *id,
-		Bootstrap:          bootstrap,
+		Bootstrap:          *bootMode == "true",
 		HeartbeatTimeout:   *heartbeat,
 		ElectionTimeout:    *election,
 		LeaderLeaseTimeout: *lease,
@@ -77,17 +85,37 @@ func main() {
 			log.Fatalf("http: %v", err)
 		}
 	}()
-	log.Printf("kvnode %s: http %s, raft %s (advertise %s), bootstrap=%v", *id, *httpAddr, *raftBind, *advertise, bootstrap)
+	log.Printf("kvnode %s: http %s, raft %s (advertise %s), bootstrap=%s has-state=%v", *id, *httpAddr, *raftBind, *advertise, *bootMode, hasState)
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
 
-	if !bootstrap && *join != "" {
-		peers := client.NewStatic(strings.Split(*join, ","), &http.Client{Timeout: 3 * time.Second})
+	if *bootMode != "true" && *join != "" {
+		peers := client.NewStatic(otherPeers(strings.Split(*join, ","), *id), &http.Client{Timeout: 3 * time.Second})
 		isMember := func() bool {
 			return slices.ContainsFunc(n.Status().Servers, func(s api.Server) bool { return s.ID == *id })
 		}
-		go joinLoop(ctx, peers, *id, *advertise, isMember, Backoff{Initial: 200 * time.Millisecond, Max: 5 * time.Second})
+		join := func() {
+			joinLoop(ctx, peers, *id, *advertise, isMember, Backoff{Initial: 200 * time.Millisecond, Max: 5 * time.Second})
+		}
+		if !probePeers {
+			go join()
+		} else {
+			go func() {
+				log.Printf("bootstrap: %s has no state; asking peers whether a cluster exists", *id)
+				if !awaitBootstrapDecision(ctx, peers, time.Second) {
+					log.Printf("bootstrap: a cluster exists (or shutting down); joining it")
+					join()
+					return
+				}
+				if err := n.BootstrapSelf(); err != nil {
+					log.Printf("bootstrap: %v; joining instead", err)
+					join()
+					return
+				}
+				log.Printf("bootstrap: all peers reachable and empty; bootstrapped a new cluster")
+			}()
+		}
 	}
 
 	<-ctx.Done()
@@ -99,4 +127,16 @@ func main() {
 		log.Printf("raft shutdown: %v", err)
 	}
 	closer.Close()
+}
+
+// otherPeers drops this node's own URL (http://<id>.<service>...) from the
+// --join list: we can't ask ourselves whether a cluster exists.
+func otherPeers(urls []string, id string) []string {
+	var out []string
+	for _, u := range urls {
+		if !strings.Contains(u, "//"+id+".") && !strings.Contains(u, "//"+id+":") {
+			out = append(out, u)
+		}
+	}
+	return out
 }
