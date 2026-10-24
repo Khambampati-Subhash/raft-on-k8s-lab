@@ -60,3 +60,4 @@ was wrong, it stays, marked as such.
 | [E7](E7-clock-skew.md) | leader clock −5 min | **Not run.** TimeChaos segfaults Go's runtime on arm64. Code reading of hashicorp/raft says the timers are monotonic |
 | [E8](E8-disk.md) | slow / failing log appends (in-process injector) | Partly. Lost 0 and no elections, but **E8b reproduced a pipeline-replication deadlock in hashicorp/raft v1.8.0** ([upstream #612](https://github.com/hashicorp/raft/issues/612)): the faulty follower stops replicating for good while looking healthy (2/2 runs) |
 | [E9](E9-wiped-pvc.md) | a node's disk wiped | Follower: yes, Lost 0. `kv-0` with peers dark: **split brain, 170,972 lost** → fixed bootstrap rule. A wiped voter can still vote in a stale leader: **75 lost** (not fixed) |
+| [E10](E10-rolling-update.md) | rolling restart under load | Mostly. One election, Lost 0, but a 5.1 s window (2.9 s of it unexplained) and a restarted follower deaf for 10 s |

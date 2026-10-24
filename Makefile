@@ -80,3 +80,7 @@ chaos-install:
 
 exp-%:
 	./scripts/exp.sh $*
+
+.PHONY: scale-down
+scale-down: # make scale-down N=3
+	./scripts/scale-down.sh $(N)
